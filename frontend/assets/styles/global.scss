@@ -1,0 +1,23 @@
+@import 'root';
+@import 'normalize';
+@import 'transitions';
+
+html {
+  font-family: $font-family-primary;
+  font-weight: 400;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-size: var(--root-font-size)!important;
+  background-color: var(--root-color-bg);
+  color: var(--root-color-text);
+}
+
+html, body {
+  min-height: vh(100);
+}
+
+a {
+  text-decoration: none;
+}

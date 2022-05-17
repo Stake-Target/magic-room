@@ -1,0 +1,21 @@
+:root {
+  --vh: 1vh;
+  --root-font-size: 10px;
+  --root-layout-offset: 8rem;
+  --root-container-width: 128rem;
+
+  --root-color-bg: #ffff;
+  --root-color-text: #21262c;
+  --root-color-border: #686565;
+  --root-color-primary: #000fff;
+  --root-color-block: #ffffff;
+  --root-color-block-text: #374251;
+
+  @include down(md) {
+    --root-layout-offset: 4rem;
+  }
+  @include down(sm) {
+    --root-layout-offset: 2rem;
+  }
+}
+

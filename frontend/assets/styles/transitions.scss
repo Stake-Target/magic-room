@@ -1,0 +1,25 @@
+.fade {
+  &-enter-active,
+  &-leave-active {
+    opacity: 1;
+    transition: opacity $transition-duration * 2;
+  }
+
+  &-enter,
+  &-leave-to {
+    opacity: 0;
+  }
+}
+
+.slideDown {
+  &-enter-active,
+  &-leave-active {
+    transition: opacity 0.4s ease, transform .6s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  }
+
+  &-enter,
+  &-leave-to {
+    transform: translate(0, -100%);
+    opacity: 0;
+  }
+}

@@ -1,53 +1,11 @@
-import Web3 from 'Web3'
-import { tokenAbi, gameAbi } from './abi'
+import MagicRoom from "~/../contract/build/contracts/MagicRoom.json"
+import Web3 from "web3"
 
-export class TokenContract {
-  static ADDRESS = '0x859DC715d6928e665e578Bb11eCBbf3De79f1950'
-
-  constructor () {
-    this.provider = new Web3(window.web3.currentProvider)
-    this.contract = new this.provider.eth.Contract(tokenAbi, TokenContract.ADDRESS)
-  }
-
-  async allowance (account) {
-    try {
-      const result = await this.contract.methods.allowance(account, GameContract.ADDRESS).call()
-      return +this.provider.utils.fromWei(result)
-    } catch (e) {
-      return 0
-    }
-  }
-
-  approve (from, amount) {
-    const value = this.provider.utils.toWei(amount.toString())
-    const data = this.contract.methods.approve(GameContract.ADDRESS, value).encodeABI()
-    return this.sendTx(from, data)
-  }
-
-  async getBalance (account) {
-    try {
-      const result = await this.contract.methods.balanceOf(account).call()
-      return +(+this.provider.utils.fromWei(result)).toFixed(2)
-    } catch (e) {
-      return 0
-    }
-  }
-
-  sendTx (from, data) {
-    const to = TokenContract.ADDRESS
-    return window.ethereum.request({
-      method: 'eth_sendTransaction',
-      params: [{ from, to, data }]
-    })
-  }
-}
-
-export class GameContract {
-  static ADDRESS = '0xF57571a7d121F69A2082B9D9007894F631e14A78'
-
-  constructor() {
-    this.provider = new Web3(window.web3.currentProvider)
-    this.contract = new this.provider.eth.Contract(gameAbi, GameContract.ADDRESS)
+export class MagicRoomContract {
+  constructor (provider, address) {
+    this.address = address
+    this.provider = provider
+    this.contract = new this.provider.eth.Contract(MagicRoom.abi, address)
   }
 
   async isOwner (address) {
@@ -87,7 +45,7 @@ export class GameContract {
   }
 
   sendTx (from, data) {
-    const to = GameContract.ADDRESS
+    const to = this.address
     return window.ethereum.request({
       method: 'eth_sendTransaction',
       params: [{ from, to, data }]

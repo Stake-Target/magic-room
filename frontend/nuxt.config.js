@@ -9,9 +9,9 @@ export default {
   globalName: 'app',
   components: false,
   loading: false,
-  server: require('./frontend/configs/server.js').default,
-  i18n: require('./frontend/configs/i18n.js').default,
-  router: require('./frontend/configs/router.js').default,
+  server: require('./configs/server.js').default,
+  i18n: require('./configs/i18n.js').default,
+  router: require('./configs/router.js').default,
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
   css: [
@@ -28,7 +28,7 @@ export default {
     { src: '~/plugins/date/nuxt.plugin.js' },
     { src: '~/plugins/router.js', mode: 'client' },
     { src: '~/plugins/persistedState.js', mode: 'client' },
-    { src: '~/plugins/view-height.js', mode: 'client' }
+    { src: '~/plugins/web3/nuxt.plugin.js', mode: 'client' }
   ],
 
   serverMiddleware: [],
@@ -40,6 +40,7 @@ export default {
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
+    'nuxt-client-init-module',
     '@nuxtjs/style-resources',
     '@nuxtjs/axios',
     'nuxt-i18n'

@@ -25,13 +25,18 @@ export default {
   methods: {
     ...mapActions('account', ['signin']),
     async onEnter () {
-      if (this.account.tokenApproved < this.form.amount) {
-        const approvalAmount = 10000000000000
-        await this.$web3.token.approve(this.$web3.game.address, this.account.address, approvalAmount)
-        this.account.tokenApproved += approvalAmount
+      try {
+        this.$spinner.start()
+        if (this.account.tokenApproved < this.form.amount) {
+          const approvalAmount = 10000000000000
+          await this.$web3.token.approve(this.$web3.game.address, this.account.address, approvalAmount)
+          this.account.tokenApproved += approvalAmount
+        }
+        await this.$web3.game.enterToRoom(this.account.address, this.form.amount)
+        this.form.amount = ''
+      } finally {
+        this.$spinner.stop()
       }
-      await this.$web3.game.enterToRoom(this.account.address, this.form.amount)
-      this.form.amount = ''
     }
   },
   computed: {

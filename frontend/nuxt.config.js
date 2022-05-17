@@ -28,6 +28,7 @@ export default {
     { src: '~/plugins/date/nuxt.plugin.js' },
     { src: '~/plugins/router.js', mode: 'client' },
     { src: '~/plugins/persistedState.js', mode: 'client' },
+    { src: '~/plugins/spinner/nuxt.plugin.js', mode: 'client' },
     { src: '~/plugins/web3/nuxt.plugin.js', mode: 'client' }
   ],
 

@@ -7,14 +7,11 @@
     <section-form :class="$style.form" />
     <section-bubbles />
     <section-help />
+    <section-loading />
 
     <div v-if="account && account.owner" :class="$style.system">
       <button :class="$style.btn" v-if="!room || !room.active" @click="onCreateRoom"><span>Create room</span></button>
       <button :class="$style.btn" v-if="room && room.active" @click="onFinishRoom"><span>Finish room</span></button>
-    </div>
-
-    <div :class="$style.loading" v-if="loaders > 0">
-      <div :class="$style.spinner"></div>
     </div>
   </div>
 </template>
@@ -28,11 +25,13 @@ import SectionRoomChairs from "~/components/sections/room/chairs"
 import SectionBubbles from "~/components/sections/bubbles"
 import SectionHelp from "~/components/sections/help"
 import SectionForm from "~/components/sections/form"
+import SectionLoading from "~/components/sections/loading"
 
 export default {
   layout: 'page',
   name: 'GameMagicRoomPage',
   components: {
+    SectionLoading,
     SectionForm,
     SectionRoomChairs,
     SectionHelp,
@@ -41,19 +40,8 @@ export default {
     SectionSignin,
     SectionEvents
   },
-  data () {
-    return {
-      loaders: 0
-    }
-  },
   methods: {
     ...mapActions('account', ['signin']),
-    startLoading () {
-      this.loaders++
-    },
-    stopLoading () {
-      this.loaders--
-    },
     async onCreateRoom () {
       await this.$web3.game.createRoom(this.account.address)
       await this.initGame()
@@ -139,35 +127,6 @@ export default {
   }
 }
 
-.loading {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  .spinner,
-  .spinner::after {
-    border-radius: 50%;
-  }
-  .spinner {
-    display: inline-block;
-    position: relative;
-    overflow: hidden;
-    border-left: 10px solid transparent;
-    transform: translateZ(0);
-    animation: spinner .5s infinite linear;
-    width: 60px;
-    height: 60px;
-    &::after {
-      border-radius: 50%;
-      width: 100%;
-      height: 100%;
-    }
-  }
-  .spinner {
-    border-top: 10px solid #fff;
-    border-right: 10px solid #fff;
-    border-bottom: 10px solid #fff;
-  }
-}
 .btn {
   text-align: center;
   display: flex;
@@ -233,15 +192,6 @@ export default {
   left: 45%;
   .btn + .btn {
     margin-left: 40px;
-  }
-}
-
-@keyframes spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
   }
 }
 </style>

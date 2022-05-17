@@ -23,10 +23,10 @@ export default {
     ...mapActions('account', ['signin']),
     async onSignin () {
       try {
-        // this.startLoading()
+        this.$spinner.start()
         await this.signin()
       } finally {
-        // setTimeout(this.stopLoading, 200)
+        setTimeout(() => this.$spinner.stop(), 200)
       }
     }
   },

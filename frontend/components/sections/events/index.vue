@@ -43,6 +43,9 @@
           🏆 {{ event }}
         </div>
       </div>
+      <div v-if="!isFull" v-observe-visibility="{ callback: visibilityChanged }">
+        <span>Loading...</span>
+      </div>
     </div>
   </div>
 </template>
@@ -54,18 +57,51 @@ export default {
   name: 'SectionEvents',
   data () {
     return {
-      events: []
+      events: [],
+      loading: false,
+      isFull: false
     }
   },
   computed: {
     ...mapState('account', ['account'])
   },
   methods: {
-    init () {
-      this.$web3.game.watch(this.onEvent)
+    async init () {
+      this.$web3.game.addEventsListener(this.onEvent)
+      await this.getPastEvents()
+    },
+    async getPastEvents () {
+      if (this.loading) {
+        return
+      }
+      try {
+        this.loading = true
+        const toBlock = this.getLastBlockNumber()
+        this.$spinner.start()
+        const events = await this.$web3.game.getPastEvents({ toBlock })
+        this.events = this.events.concat(events)
+        if (!events.length) {
+          this.isFull = true
+        }
+      } finally {
+        this.loading = false
+        this.$spinner.stop()
+      }
+    },
+    getLastBlockNumber () {
+      if (this.events.length) {
+        return this.events[this.events.length - 1].blockNumber - 1
+      } else {
+        return null
+      }
     },
     onEvent (data) {
       this.events.unshift(data)
+    },
+    visibilityChanged (isVisible) {
+      if (isVisible) {
+        this.getPastEvents()
+      }
     },
     address (address) {
       if (this.account && this.account.address.toUpperCase() === address.toUpperCase()) {

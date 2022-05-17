@@ -4,12 +4,12 @@
       <img :class="$style.ico" src="~/assets/images/coin.png" alt="" />
       <span :class="$style.value">{{ balance | number }}</span>
     </div>
-    <button :class="$style.login" @click="onSignin">
+    <button :class="[$style.login, {[this.$style.disabled]: !!account}]" @click="onSignin">
       <img src="@/assets/images/metamask-fox.svg" alt="" />
       <span>
-          <template v-if="account">{{ account.address | hash(2) }}</template>
-          <template v-else>Sign In</template>
-        </span>
+        <template v-if="account">{{ account.address | hash(2) }}</template>
+        <template v-else>Sign In</template>
+      </span>
     </button>
   </div>
 </template>
@@ -73,6 +73,9 @@ export default {
   position: relative;
   overflow: hidden;
   width: 180px;
+  &.disabled {
+    pointer-events: none;
+  }
   span {
     position: relative;
     z-index: 2;

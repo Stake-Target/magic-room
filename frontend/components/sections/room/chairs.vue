@@ -41,12 +41,12 @@ export default {
     left: 0;
   }
   &:nth-child(2) {
-    top: 8%;
+    top: 10%;
     left: 24%;
     transform: rotate(10deg);
   }
   &:nth-child(3) {
-    top: 0;
+    top: 12%;
     left: 48%;
   }
   &:nth-child(4) {
@@ -60,27 +60,27 @@ export default {
     left: 5%;
   }
   &:nth-child(6) {
-    top: 39%;
+    top: 43%;
     left: 34%;
   }
   &:nth-child(7) {
-    top: 35%;
+    top: 45%;
     left: 56%;
     transform: rotate(8deg);
   }
 
   &:nth-child(8) {
-    top: 74%;
+    top: 76%;
     left: 2%;
     transform: rotate(6deg);
   }
   &:nth-child(9) {
-    top: 72%;
+    top: 74%;
     left: 28%;
     transform: rotate(-5deg);
   }
   &:nth-child(10) {
-    top: 75%;
+    top: 76%;
     left: 60%;
   }
   img {

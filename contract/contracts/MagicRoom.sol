@@ -1,167 +1,197 @@
 pragma solidity ^0.8.0;
 
-import "./helpers.sol";
-import "./events.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./randomize.sol";
+import "./tokenomic.sol";
 
-contract MagicRoom is Helpers, Ownable, Events {
+contract MagicRoom is Randomize, Tokenomic {
   Room[] rooms;
-  IERC20 token;
-  Tokenomics tokenomics = Tokenomics(1, 50, 28, 20);
+  uint idleTime = 1 days;
 
-  uint[] chairProbability = [13, 3, 3, 3, 13, 13, 13, 13, 13, 13];
-  uint balance = 0;
+  constructor(address _tokenAddress) Tokenomic(_tokenAddress) {}
 
-  constructor(address _tokenAddress) {
-    token = IERC20(_tokenAddress);
-  }
-
-  struct Tokenomics {
-    uint fee;
-    uint reward;
-    uint vip;
-    uint winners;
-  }
+  event StartRoom(uint256 timestamp, uint roomId, Room room);
+  event FinishRoom(uint256 timestamp, uint roomId, Room room);
+  event Vip(uint256 timestamp, uint roomId, uint step, RewardInfo reward);
+  event Reward(uint256 timestamp, uint roomId, uint step, RewardInfo reward);
+  event Winner(uint256 timestamp, uint roomId, uint step, RewardInfo reward);
+  event ChangeChair(uint256 timestamp, uint roomId, uint step, ChairChangesInfo chairChanges, Room room);
 
   struct Room {
+    uint id;
     uint price;
     uint bank;
-    uint cycles;
+    uint steps;
     uint step;
     bool active;
+    uint lastActionTime;
     address[] chairs;
   }
 
-  modifier roomFinished () {
-    require(rooms.length == 0 || !rooms[rooms.length - 1].active, "there is an active room");
+  struct RewardInfo {
+    address to;
+    uint index;
+    uint value;
+  }
+
+  struct ChairChangesInfo {
+    address enter;
+    address leave;
+    uint index;
+  }
+
+  modifier currentRoomIsNotActive () {
+    require(
+      _currentRoomIsNotActive(),
+      "there is an active room"
+    );
     _;
   }
 
-  modifier availableRoom () {
-    require(rooms.length != 0 && rooms[rooms.length - 1].active, "no active room");
+  modifier currentRoomIsActive () {
+    require(
+      _currentRoomIsActive(),
+      "no active room"
+    );
+    _;
+  }
+
+  modifier currentRoomIsActiveAndNot () {
+    require(
+      _currentRoomIsActive(),
+      "no active room"
+    );
     _;
   }
 
   modifier availableAmount (uint _amount) {
     Room memory room = rooms[rooms.length - 1];
-    uint min = room.price + 1 * 10 ** 18;
+    uint min = room.price + minPrice;
     require(_amount >= min, string(abi.encodePacked("amount must be greater than or equal to ", min)));
     _;
   }
 
-  function createRoom() external onlyOwner roomFinished {
-    uint cycles = getRandomRange(100, 2000);
-    uint price = 0;
-    address[] memory chairs = new address[](10);
-    rooms.push(
-      Room(price, 0, cycles, 0, true, chairs)
-    );
-    emit StartRoom(rooms.length - 1, price);
+  function createRoom(uint _amount) external currentRoomIsNotActive {
+    if (_currentRoomIsDead()) {
+      _finishRoom();
+    }
+    _createRoom();
+    _enterToRoom(_amount);
   }
 
-  function getTokenimic() external view returns (uint fee, uint reward, uint vip, uint winners ) {
-    return (tokenomics.fee, tokenomics.reward, tokenomics.vip, tokenomics.winners);
+  function getCurrentRoom() external view returns(Room memory room) {
+    Room memory room = rooms[rooms.length - 1];
+    return room;
   }
 
-  function getCurrentRoom() external view returns (
-    uint price,
-    uint bank,
-    uint step,
-    bool active,
-    address[] memory chairs
-  ) {
-    Room storage room = rooms[rooms.length - 1];
+  function enterToRoom(uint _amount) external currentRoomIsActive availableAmount(_amount) {
+    _enterToRoom(_amount);
+  }
+
+  function _currentRoomIsNotActive() private returns(bool) {
     return (
-      room.price,
-      room.bank,
-      room.step,
-      room.active,
-      room.chairs
+    rooms.length == 0
+    || !rooms[rooms.length - 1].active
+    || rooms[rooms.length - 1].lastActionTime + idleTime < block.timestamp
     );
   }
 
-  function _getTokens(uint _amount) private {
-    token.transferFrom(msg.sender, address(this), _amount);
+  function _currentRoomIsActive() private returns(bool) {
+    return (
+    rooms.length != 0
+    && rooms[rooms.length - 1].active
+    && rooms[rooms.length - 1].lastActionTime + idleTime > block.timestamp
+    );
   }
 
-  function _sendTokens(address _to, uint _amount) private {
-    token.transfer(_to, _amount);
+  function _currentRoomIsDead() private returns(bool) {
+    return (
+      rooms.length != 0
+      && rooms[rooms.length - 1].active
+      && rooms[rooms.length - 1].lastActionTime + idleTime < block.timestamp
+    );
   }
 
-  function enterToRoom(uint _amount) external availableRoom availableAmount(_amount) {
-    _getTokens(_amount);
-    uint roomId = rooms.length - 1;
-    Room storage room = rooms[roomId];
+  function _createRoom () private {
+    uint steps = getRandomRange(100, 2000);
+    uint id = rooms.length + 1;
+    address[] memory chairs = new address[](10);
+    rooms.push(Room(id, 0, 0, steps, 0, true, block.timestamp, chairs));
+    emit StartRoom(block.timestamp, id, rooms[rooms.length - 1]);
+  }
 
-    uint chairIndex = getRandomIndexInArrayWitsProbability(chairProbability);
+  function _enterToRoom(uint _amount) private availableAmount(_amount) {
+    Room storage room = rooms[rooms.length - 1];
     uint vipChair = getRandomRange(0, room.chairs.length - 1);
-    uint rewards = _amount * tokenomics.reward / 100;
-    uint winners = _amount * tokenomics.winners / 100;
-    uint vip = _amount * tokenomics.vip / 100;
-    uint fee = _amount * tokenomics.fee / 100;
     uint rewardAddressCount = getValidAddressCount(room.chairs);
-    address leaveAddress = room.chairs[chairIndex];
+    (uint rewards, uint winners, uint vip, uint fee) = getShares(_amount);
+
+    getTokens(_amount);
 
     room.step++;
+    room.lastActionTime = block.timestamp;
+    room.price = _amount;
+    balance = balance + fee;
 
-    if (room.chairs[vipChair] != address(0)) {
-      _sendTokens(room.chairs[vipChair], vip);
-      emit Vip(roomId, room.step, vipChair, room.chairs[vipChair], vip);
-    } else {
+    if (room.chairs[vipChair] == address(0)) {
       winners = winners + vip;
-    }
-
-    if (rewardAddressCount != 0) {
-      uint rewardPerChair = rewards / rewardAddressCount;
-      for (uint i = 0; i < room.chairs.length; i++) {
-        if (room.chairs[i] != address(0)) {
-          _sendTokens(room.chairs[i], rewardPerChair);
-          emit Reward(roomId, room.step, room.chairs[i], rewardPerChair);
-        }
-      }
     } else {
+      _sendRewardToVip(room, vipChair, vip);
+    }
+    if (rewardAddressCount == 0) {
       winners = winners + rewards;
+    } else {
+      _sendRewardToMembers(room, rewards / rewardAddressCount);
     }
 
     room.bank = room.bank + winners;
-    room.price = _amount;
-    room.chairs[chairIndex] = msg.sender;
-    balance = balance + fee;
-    emit ChangeChair(roomId, room.step, chairIndex, msg.sender, leaveAddress, room.price, room.bank);
+    _changeChair(room);
 
-    if (room.cycles == room.step) {
+    if (room.steps == room.step) {
       _finishRoom();
     }
   }
 
+  function _changeChair(Room storage _room) private {
+    uint index = getRandomChair();
+    ChairChangesInfo memory chairUpdate = ChairChangesInfo(msg.sender, _room.chairs[index], index);
+    _room.chairs[index] = msg.sender;
+    emit ChangeChair(block.timestamp, _room.id, _room.step, chairUpdate, _room);
+  }
+
+  function _sendRewardToVip(Room memory _room, uint _index, uint _amount) private {
+    address to = _room.chairs[_index];
+    if (to != address(0) && _amount > 0) {
+      RewardInfo memory rewardInfo = RewardInfo(to, _index, _amount);
+      sendTokens(rewardInfo.to, rewardInfo.value);
+      emit Vip(block.timestamp, _room.id, _room.step, rewardInfo);
+    }
+  }
+
+  function _sendRewardToMembers(Room memory _room, uint _amount) private {
+    for (uint i = 0; i < _room.chairs.length; i++) {
+      if (_room.chairs[i] != address(0)) {
+        RewardInfo memory rewardInfo = RewardInfo(_room.chairs[i], i, _amount);
+        sendTokens(rewardInfo.to, rewardInfo.value);
+        emit Reward(block.timestamp, _room.id, _room.step, rewardInfo);
+      }
+    }
+  }
+
   function _finishRoom() private {
-    uint roomId = rooms.length - 1;
-    Room storage room = rooms[roomId];
+    Room storage room = rooms[rooms.length - 1];
     uint rewardAddressCount = getValidAddressCount(room.chairs);
     uint bankRewardPerChair = room.bank / rewardAddressCount;
 
     for (uint i = 0; i < room.chairs.length; i++) {
       if (room.chairs[i] != address(0)) {
-        _sendTokens(room.chairs[i], bankRewardPerChair);
-        emit Winner(roomId, room.step, room.chairs[i], bankRewardPerChair);
+        RewardInfo memory rewardInfo = RewardInfo(room.chairs[i], i, bankRewardPerChair);
+        sendTokens(rewardInfo.to, rewardInfo.value);
+        emit Winner(block.timestamp, room.id, room.step, rewardInfo);
       }
     }
 
     room.active = false;
-    emit FinishRoom(roomId, room.step, room.price, room.bank);
-  }
 
-  function finish() external onlyOwner availableRoom {
-    _finishRoom();
-  }
-
-  function withdraw(address _to) external onlyOwner {
-    _sendTokens(_to, balance);
-    balance = 0;
-  }
-
-  function balanceOf() external view onlyOwner returns(uint) {
-    return balance;
+    emit FinishRoom(block.timestamp, room.id, room);
   }
 }

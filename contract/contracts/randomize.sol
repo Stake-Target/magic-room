@@ -1,14 +1,15 @@
 pragma solidity ^0.8.0;
 
-abstract contract Helpers {
+abstract contract Randomize {
   uint randNonce = 0;
+  uint[] probabilities = [13, 3, 3, 3, 13, 13, 13, 13, 13, 13];
 
   function getRandomRange(uint _min, uint _max) public returns(uint) {
     randNonce++;
     return uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, randNonce))) %  (_max - _min + 1) + _min;
   }
 
-  function getRandomIndexInArrayWitsProbability(uint[] memory _probability) public returns(uint) {
+  function _getRandomIndexInArrayWitsProbability(uint[] memory _probability) private returns(uint) {
     uint accumulate = 0;
     uint accumulate2 = 0;
     uint value;
@@ -27,6 +28,10 @@ abstract contract Helpers {
       accumulate2 = accumulate2 + _probability[i];
     }
     return result;
+  }
+
+  function getRandomChair() internal returns(uint) {
+    return _getRandomIndexInArrayWitsProbability(probabilities);
   }
 
   function getValidAddressCount(address[] memory _addresses) internal returns(uint) {

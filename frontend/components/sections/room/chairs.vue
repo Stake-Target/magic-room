@@ -1,9 +1,24 @@
 <template>
   <div :class="$style.room">
-    <div :class="$style.chair" v-for="chair in chairs" :key="chair.index">
-      <img src="~/assets/images/chair.full.png" alt="" />
-      <template v-if="chair.isMy">My</template>
-      <template v-if="chair.isEmpty">Empty</template>
+    <div :class="$style.chair" v-for="(chair, i) in chairs" :key="chair.index">
+      <img v-if="chair.isPriority" src="~/assets/images/chair.red.png" alt="" />
+      <img v-else src="~/assets/images/chair.blue.png" alt="" />
+      <img :class="$style.man" v-if="chair.isMy" src="~/assets/images/man.green.png" alt="" />
+      <img :class="$style.man" v-else-if="!chair.isEmpty" src="~/assets/images/man.blue.png" alt="" />
+      <div :class="$style.events">
+        <transition-group :name="$style.events" tag="div">
+          <div :class="$style.event" v-for="event in events[i]" :key="event.id">
+            <span :class="$style.icon">
+              <template v-if="event.type === 'Vip'">🏵</template>
+              <template v-else-if="event.type === 'Reward'">🏅</template>
+            </span>
+            <span>+</span>
+            <img :class="$style.coin" src="~/assets/images/coin.png" alt="" />
+            <span>{{ event.value | number }}</span>
+            <span :class="$style.currency">MGT</span>
+          </div>
+        </transition-group>
+      </div>
     </div>
   </div>
 </template>
@@ -13,6 +28,13 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'SectionRoomChairs',
+  data () {
+    return {
+      events: [
+        [], [], [], [], [], [], [], [], [], []
+      ]
+    }
+  },
   computed: {
     ...mapState('account', ['account']),
     ...mapState('room', ['room']),
@@ -21,12 +43,44 @@ export default {
       return this.room.chairs.map((chair, i) => {
         return {
           index: i,
+          isPriority: [1, 2, 3].includes(i),
           isEmpty: emptyAddress === chair,
           isMy: this.account && this.account.address.toUpperCase() === chair.toUpperCase(),
           address: chair
         }
       })
     }
+  },
+  methods: {
+    addEvent (event) {
+      const id = Math.random()
+      const chairIndex = event.data.chairIndex
+      this.events[chairIndex].push({
+        id,
+        type: event.event,
+        value: event.data.value
+      })
+      setTimeout(() => {
+        const index = this.events[chairIndex].findIndex(i => i.id === id)
+        this.events[chairIndex].splice(index, 1)
+      }, 2000)
+    }
+  },
+  mounted() {
+    this.$web3.game.addEventsListener((event) => {
+      if (['Reward', 'Vip', 'Winner'].includes(event.event)) {
+        this.addEvent(event)
+      }
+    })
+    // setInterval(() => {
+    //   this.addEvent({
+    //     event: 'Vip',
+    //     data: {
+    //       chairIndex: 1,
+    //       value: 10
+    //     }
+    //   })
+    // }, 1200)
   }
 }
 </script>
@@ -35,7 +89,7 @@ export default {
 .room {}
 .chair {
   position: absolute;
-  width: 18%;
+  width: 28%;
   &:nth-child(1) {
     top: 10%;
     left: 0;
@@ -64,8 +118,8 @@ export default {
     left: 34%;
   }
   &:nth-child(7) {
-    top: 45%;
-    left: 56%;
+    top: 40%;
+    left: 65%;
     transform: rotate(8deg);
   }
 
@@ -87,4 +141,62 @@ export default {
     width: 100%;
   }
 }
+.man {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.events {
+  position: absolute;
+  top: 40%;
+  right: 10%;
+  &:global(-enter-active) {
+    transition: transform 1.6s ease, opacity 1.6s ease;
+  }
+  &:global(-leave-active) {
+    transition: opacity 0.5s ease;
+  }
+
+  &:global(-enter) {
+    transform: translate(0, 100%);
+    opacity: 0;
+  }
+  &:global(-leave-to) {
+    opacity: 0;
+  }
+}
+.event {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  color: greenyellow;
+  z-index: 4;
+  .icon {
+    margin-right: 4px;
+  }
+  .coin {
+    width: 20px;
+    height: 20px;
+    margin: 0 4px;
+  }
+  .currency {
+    font-size: 12px;
+    align-self: flex-end;
+  }
+}
+//
+//.events-enter-active,
+//.events-leave-active {
+//  transition: all 0.5s ease;
+//}
+//.events-enter-from,
+//.events-leave-to {
+//  opacity: 0;
+//  transform: translateX(30px);
+//}
 </style>

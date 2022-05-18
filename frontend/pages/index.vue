@@ -65,7 +65,7 @@ export default {
 .app {
   font-family: "Comic Sans MS";
   min-height: 100vh;
-  background-color: rgba(248, 142, 82, 0.94);
+  background-color: rgba(236, 133, 75, 0.94);
   position: relative;
   --decor-size: 30px;
 }
@@ -102,10 +102,10 @@ export default {
 }
 .chairs {
   position: fixed;
-  top: 15%;
+  top: 5%;
   left: 5%;
   width: 100vh;
-  bottom: 20%;
+  bottom: 25%;
 }
 .form {
   position: fixed;

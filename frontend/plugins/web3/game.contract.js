@@ -99,14 +99,17 @@ class RegistryEvents {
   }
 
   static Vip (data) {
+    console.log('Reward', data)
     return {
       chair: data.chair,
       roomId: +data.roomId,
-      step: +data.step
+      step: +data.step,
+      value: formatValue(data.value)
     }
   }
 
   static Reward (data) {
+    console.log('Reward', data)
     return {
       chair: data.chair,
       roomId: +data.roomId,
@@ -124,6 +127,17 @@ class RegistryEvents {
       price: formatValue(data.price),
       roomId: +data.roomId,
       step: +data.step
+    }
+  }
+
+  static Winner (data) {
+    return {
+      roomId: +data.roomId,
+      step: +data.step,
+      chairIndex: +data.chairIndex,
+      chair: data.chair,
+      leave: data.leave,
+      value: formatValue(data.value)
     }
   }
 

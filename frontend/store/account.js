@@ -1,6 +1,13 @@
+import Vue from 'vue'
+
 export const state = () => ({
-  account: null
+  account: null,
+  names: {}
 })
+
+export const getters = {
+  name: state => state.account ? state.names[state.account.address] : ''
+}
 
 export const actions = {
   async signin ({ dispatch }) {
@@ -12,11 +19,17 @@ export const actions = {
     const tokenApproved = await this.$web3.token.allowance(this.$web3.game.address, address)
     const owner = await this.$web3.game.isOwner(address)
     commit('account', { address, balance, tokenApproved, owner })
+  },
+  setName ({ commit }, { address, name }) {
+    commit('name', { address, name })
   }
 }
 
 export const mutations = {
   account (state, data = null) {
     state.account = data
+  },
+  name (state, { address, name }) {
+    Vue.set(state.names, address, name)
   }
 }

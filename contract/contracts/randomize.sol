@@ -34,14 +34,4 @@ abstract contract Randomize {
     return _getRandomIndexInArrayWitsProbability(probabilities);
   }
 
-  function getValidAddressCount(address[] memory _addresses) internal returns(uint) {
-    uint counter = 0;
-    for (uint i = 0; i < _addresses.length; i++) {
-      if (_addresses[i] != address(0)) {
-        counter++;
-      }
-    }
-    return counter;
-  }
-
 }

@@ -26,10 +26,11 @@ contract MagicRoom is Randomize, Tokenomic {
     bool active;
     uint lastActionTime;
     address[] chairs;
-}
+    string[] names;
+  }
 
   struct RewardInfo {
-    address to;
+    Member member;
     uint index;
     uint value;
   }
@@ -40,8 +41,8 @@ contract MagicRoom is Randomize, Tokenomic {
   }
 
   struct ChairChangesInfo {
-    address enter;
-    address leave;
+    Member enter;
+    Member leave;
     uint index;
   }
 
@@ -76,16 +77,21 @@ contract MagicRoom is Randomize, Tokenomic {
     _;
   }
 
+  modifier availableName (string calldata _name) {
+    require(bytes(_name).length <= 20, "max length 20 characters");
+    _;
+  }
+
   function setStepsCount(uint count) external onlyOwner {
     rooms[roomCount].steps = count;
   }
 
-  function createRoom(uint _amount) external currentRoomIsNotActive {
+  function createRoom(string calldata _name, uint _amount) external availableName(_name) currentRoomIsNotActive {
     if (_currentRoomIsDead()) {
       _finishRoom();
     }
     _createRoom();
-    _enterToRoom(_amount);
+    _enterToRoom(_name, _amount);
   }
 
   function getCurrentRoom() external view returns(Room memory room) {
@@ -93,8 +99,8 @@ contract MagicRoom is Randomize, Tokenomic {
     return room;
   }
 
-  function enterToRoom(uint _amount) external currentRoomIsActive availableAmount(_amount) {
-    _enterToRoom(_amount);
+  function enterToRoom(string calldata _name, uint _amount) external availableName(_name) currentRoomIsActive availableAmount(_amount) {
+    _enterToRoom(_name, _amount);
   }
 
   function _currentRoomIsNotActive() private returns(bool) {
@@ -125,17 +131,14 @@ contract MagicRoom is Randomize, Tokenomic {
     uint steps = getRandomRange(100, 2000);
     roomCount++;
     address[] memory chairs = new address[](10);
-//    for (uint i = 0; i < _addresses.length; i++) {
-//      if (_addresses[i] != address(0)) {
-//        counter++;
-//      }
-//    }
-    rooms[roomCount] = Room(roomCount, 0, 0, steps, 0, true, block.timestamp, chairs);
+    string[] memory names = new string[](10);
+    rooms[roomCount] = Room(roomCount, 0, 0, steps, 0, true, block.timestamp, chairs, names);
     emit StartRoom(block.timestamp, roomCount, rooms[roomCount]);
   }
 
-  function _enterToRoom(uint _amount) private availableAmount(_amount) {
+  function _enterToRoom(string calldata _name, uint _amount) private availableAmount(_amount) {
     Room storage room = rooms[roomCount];
+    Member memory enter = Member(msg.sender, _name);
     uint vipChair = getRandomRange(0, room.chairs.length - 1);
     uint rewardAddressCount = getValidAddressCount(room.chairs);
     (uint rewards, uint winners, uint vip, uint fee) = getShares(_amount);
@@ -159,25 +162,28 @@ contract MagicRoom is Randomize, Tokenomic {
     }
 
     room.bank = room.bank + winners;
-    _changeChair(room);
+    _changeChair(room, enter);
 
     if (room.steps == room.step) {
       _finishRoom();
     }
   }
 
-  function _changeChair(Room storage _room) private {
+  function _changeChair(Room storage _room, Member memory enter) private {
     uint index = getRandomChair();
-    ChairChangesInfo memory chairUpdate = ChairChangesInfo(msg.sender, _room.chairs[index], index);
-    _room.chairs[index] = msg.sender;
+    Member memory leave = Member(_room.chairs[index], _room.names[index]);
+    ChairChangesInfo memory chairUpdate = ChairChangesInfo(enter, leave, index);
+    _room.chairs[index] = enter.account;
+    _room.names[index] = enter.name;
     emit ChangeChair(block.timestamp, _room.id, _room.step, chairUpdate, _room);
   }
 
   function _sendRewardToVip(Room memory _room, uint _index, uint _amount) private {
     address to = _room.chairs[_index];
     if (to != address(0) && _amount > 0) {
-      RewardInfo memory rewardInfo = RewardInfo(to, _index, _amount);
-      sendTokens(rewardInfo.to, rewardInfo.value);
+      Member memory member = Member(to, _room.names[_index]);
+      RewardInfo memory rewardInfo = RewardInfo(member, _index, _amount);
+      sendTokens(rewardInfo.member.account, rewardInfo.value);
       emit Vip(block.timestamp, _room.id, _room.step, rewardInfo);
     }
   }
@@ -185,8 +191,9 @@ contract MagicRoom is Randomize, Tokenomic {
   function _sendRewardToMembers(Room memory _room, uint _amount) private {
     for (uint i = 0; i < _room.chairs.length; i++) {
       if (_room.chairs[i] != address(0)) {
-        RewardInfo memory rewardInfo = RewardInfo(_room.chairs[i], i, _amount);
-        sendTokens(rewardInfo.to, rewardInfo.value);
+        Member memory member = Member(_room.chairs[i], _room.names[i]);
+        RewardInfo memory rewardInfo = RewardInfo(member, i, _amount);
+        sendTokens(member.account, rewardInfo.value);
         emit Reward(block.timestamp, _room.id, _room.step, rewardInfo);
       }
     }
@@ -199,14 +206,25 @@ contract MagicRoom is Randomize, Tokenomic {
 
     for (uint i = 0; i < room.chairs.length; i++) {
       if (room.chairs[i] != address(0)) {
-        RewardInfo memory rewardInfo = RewardInfo(room.chairs[i], i, bankRewardPerChair);
-        sendTokens(rewardInfo.to, rewardInfo.value);
+        Member memory member = Member(room.chairs[i], room.names[i]);
+        RewardInfo memory rewardInfo = RewardInfo(member, i, bankRewardPerChair);
+        sendTokens(member.account, rewardInfo.value);
         emit Winner(block.timestamp, room.id, room.step, rewardInfo);
       }
     }
 
     room.active = false;
-
     emit FinishRoom(block.timestamp, room.id, room);
   }
+
+  function getValidAddressCount(address[] memory _addresses) internal returns(uint) {
+    uint counter = 0;
+    for (uint i = 0; i < _addresses.length; i++) {
+      if (_addresses[i] != address(0)) {
+        counter++;
+      }
+    }
+    return counter;
+  }
+
 }

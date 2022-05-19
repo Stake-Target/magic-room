@@ -1,10 +1,11 @@
 const utils = require("./helpers/utils");
 const Web3 = require("web3");
+const time = require("./helpers/time");
 const MagicRoom = artifacts.require("MagicRoom");
 const MagicToken = artifacts.require("MagicToken");
 
 contract("MagicRoom", (accounts) => {
-  let [alice, bob, cavin] = accounts;
+  let [alice, bob, cavin, dany] = accounts;
   let tokenContractInstance;
   let contractInstance;
 
@@ -15,7 +16,7 @@ contract("MagicRoom", (accounts) => {
     );
   });
 
-  xcontext("create a new room", async () => {
+  context("create a new room", async () => {
     it("should be able to create a new room", async () => {
       const result = await createRoom(alice);
       expect(result.receipt.status).to.equal(true);
@@ -32,7 +33,7 @@ contract("MagicRoom", (accounts) => {
     })
   })
 
-  xcontext("view fns", async () => {
+  context("view fns", async () => {
     it("should return tokenomic", async () => {
       const tokenimic = await contractInstance.getTokenimic.call();
       expect(tokenimic.winners.toNumber()).to.be.a('number');
@@ -55,7 +56,7 @@ contract("MagicRoom", (accounts) => {
     })
   })
 
-  xcontext("enter to room", async () => {
+  context("enter to room", async () => {
     it("on chair", async () => {
       await createRoom(alice);
       await giveTokens(bob, 100);
@@ -92,36 +93,72 @@ contract("MagicRoom", (accounts) => {
     })
   })
 
-  xit("finish", async () => {
-    await contractInstance.createRoom();
+  context("room", async () => {
+    it("should change lastActionTime", async () => {
+      await createRoom(alice, 1);
+      await contractInstance.setStepsCount(3);
+      const room = await contractInstance.getCurrentRoom.call();
+      const startActionTime = room.lastActionTime;
 
-    await giveTokens(bob, 100);
-    await giveTokens(cavin, 100);
+      await giveTokens(bob, 10000);
 
-    await contractInstance.enterToRoom(toWei("1"), { from: bob });
-    await contractInstance.enterToRoom(toWei("2"), { from: cavin });
-    const balanceCavin1 = fromWei(await tokenContractInstance.balanceOf(cavin));
+      for(let i = 1, prevPrice = fromWei(room.price) + 1; i < +room.steps; i++, prevPrice ++) {
+        await contractInstance.enterToRoom(toWei(prevPrice), { from: bob });
+        const roomAfterEnter = await contractInstance.getCurrentRoom.call();
+        expect(startActionTime !== roomAfterEnter.lastActionTime).to.equal(true);
+      }
+    })
+    it("should finish", async () => {
+      await createRoom(alice, 1);
+      await contractInstance.setStepsCount(3 * 3 + 1);
+      const room = await contractInstance.getCurrentRoom.call();
+      await giveTokens(bob, 10000);
+      await giveTokens(cavin, 10000);
+      await giveTokens(dany, 10000);
 
-    await contractInstance.finish();
-    const room = await contractInstance.getCurrentRoom.call();
-    const occupied = room.chairs.filter(a => a !== '0x0000000000000000000000000000000000000000').length;
-    const balanceCavin2 = fromWei(await tokenContractInstance.balanceOf(cavin));
-
-    expect(room.active).to.equal(false);
-    expect(balanceCavin1 === 98).to.equal(true);
-    expect(balanceCavin2 === balanceCavin1 + fromWei(room.bank) / occupied).to.equal(true);
+      let prevPrice = fromWei(room.price);
+      let step = 1;
+      for(let i = 1; i < +room.steps; i += 3) {
+        await nextBid(bob);
+        await nextBid(cavin);
+        await nextBid(dany);
+      }
+      async function nextBid (from) {
+        prevPrice += 1;
+        step += 1;
+        await contractInstance.enterToRoom(toWei(prevPrice), { from });
+      }
+      const room2 = await contractInstance.getCurrentRoom.call();
+      expect(room2.active).to.equal(false);
+    })
+    // it("timeout", async () => {
+    //   await createRoom(alice, 1);
+    //   await giveTokens(bob, 10000);
+    //   await time.increase(time.duration.days);
+    //   const room = await contractInstance.getCurrentRoom.call();
+    //   console.log('room', room);
+    // })
+    it("rewards", async () => {
+      const tokenimic = await contractInstance.getTokenimic.call();
+      const cavinTikens = 2;
+      await createRoom(bob, 1);
+      await giveTokens(cavin, cavinTikens);
+      const reward = cavinTikens * tokenimic.reward / 100;
+      await contractInstance.enterToRoom(toWei(cavinTikens), { from: cavin });
+      const balbncaBob = await tokenContractInstance.balanceOf(bob);
+      expect(fromWei(balbncaBob) === reward).to.equal(true);
+    })
   })
 
   it("withdraw", async () => {
-    await createRoom(bob);
+    await createRoom(bob, 1);
     const tokenimic = await contractInstance.getTokenimic.call();
 
     await giveTokens(bob, 99);
     await giveTokens(cavin, 100);
 
-    await contractInstance.enterToRoom(toWei("1"), { from: bob });
-    await contractInstance.enterToRoom(toWei("2"), { from: cavin });
-    const fee = 3 * tokenimic.fee.toNumber() / 100;
+    await contractInstance.enterToRoom(toWei(2), { from: cavin });
+    const fee = 3 * tokenimic.fee / 100;
 
     const balanceBefore = fromWei(await contractInstance.balanceOf.call());
     await contractInstance.withdraw(alice);
@@ -144,10 +181,10 @@ contract("MagicRoom", (accounts) => {
     await tokenContractInstance.transfer(to, toWei(amount));
     await tokenContractInstance.approve(contractInstance.address, toWei(amount), { from: to });
   }
-  async function createRoom (from) {
-    await tokenContractInstance.transfer(from, toWei(1));
-    await tokenContractInstance.approve(contractInstance.address, toWei(1), { from });
-    return contractInstance.createRoom(toWei(1), { from });
+  async function createRoom (from, amount = 1) {
+    await tokenContractInstance.transfer(from, toWei(amount));
+    await tokenContractInstance.approve(contractInstance.address, toWei(amount), { from });
+    return contractInstance.createRoom(toWei(amount), { from });
   }
 })
 

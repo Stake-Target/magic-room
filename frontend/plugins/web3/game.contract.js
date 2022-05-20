@@ -149,7 +149,10 @@ class RegistryEvents {
       bank: formatValue(data.bank),
       active: data.active,
       chairs: data.chairs,
-      step: +data.step
+      names: data.names,
+      lastActionTime: +data.lastActionTime,
+      step: +data.step,
+      steps: +data.steps
     }
   }
 }

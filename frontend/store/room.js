@@ -3,7 +3,7 @@ export const state = () => ({
 })
 
 export const getters = {
-  roomIsActive: state => state.room && (state.room.active && state.room.lastActionTime + (24 * 60 * 60) > Date.now())
+  roomIsActive: state => state.room && (state.room.active && (state.room.lastActionTime + (24 * 60 * 60)) * 1000 > Date.now())
 }
 
 export const actions = {

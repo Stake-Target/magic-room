@@ -67,8 +67,8 @@ export default {
   },
   methods: {
     async init () {
-      this.$web3.game.addEventsListener(this.onEvent)
-      await this.getPastEvents()
+      // this.$web3.game.addEventsListener(this.onEvent)
+      // await this.getPastEvents()
     },
     async getPastEvents () {
       if (this.loading) {

@@ -43,15 +43,6 @@ export default {
     SectionSignin,
     SectionEvents
   },
-  methods: {
-    // newEvent (data) {
-    //   if (data.event === 'ChangeChair') {
-    //     this.room.bank = data.data.bank
-    //     this.room.step = data.data.step
-    //     this.room.price = data.data.price
-    //   }
-    // }
-  },
   computed: {
     ...mapState('account', ['account']),
     ...mapState('room', ['room']),

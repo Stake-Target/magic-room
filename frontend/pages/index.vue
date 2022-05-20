@@ -9,6 +9,8 @@
       <section-room-chairs :class="$style.chairs" />
     </template>
 
+    <section-signin-name :class="$style.name" />
+
     <section-bubbles />
     <section-help />
     <section-loading />
@@ -25,11 +27,13 @@ import SectionBubbles from "~/components/sections/bubbles"
 import SectionHelp from "~/components/sections/help"
 import SectionForm from "~/components/sections/form"
 import SectionLoading from "~/components/sections/loading"
+import SectionSigninName from "~/components/sections/signin/name"
 
 export default {
   layout: 'page',
   name: 'GameMagicRoomPage',
   components: {
+    SectionSigninName,
     SectionLoading,
     SectionForm,
     SectionRoomChairs,
@@ -117,6 +121,7 @@ export default {
     transform: translate(0, 0);
   }
 }
+.name {}
 .admin {
   position: fixed;
   bottom: 40px;

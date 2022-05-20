@@ -4,7 +4,7 @@ import { MagicRoomContract } from "~/plugins/web3/game.contract"
 
 export default function ({ app }, inject) {
   const provider = new Web3(window.web3.currentProvider)
-  const token = new MGTTokenContract(provider, '0x859DC715d6928e665e578Bb11eCBbf3De79f1950')
-  const game = new MagicRoomContract(provider, '0xF57571a7d121F69A2082B9D9007894F631e14A78')
+  const token = new MGTTokenContract(provider, '0xec609218AA69faA4371D282e34Ff423D00afC137')
+  const game = new MagicRoomContract(provider, '0xb60634925867304CF4a4aACdFDd2937538F54862')
   inject('web3', { provider, token, game })
 }

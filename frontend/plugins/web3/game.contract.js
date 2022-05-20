@@ -32,14 +32,15 @@ export class MagicRoomContract {
     }
   }
 
-  enterToRoom (from, amount) {
+  enterToRoom (from, name, amount) {
     const value = this.provider.utils.toWei(amount.toString())
-    const data = this.contract.methods.enterToRoom(value).encodeABI()
+    const data = this.contract.methods.enterToRoom(name, value).encodeABI()
     return this._sendTx(from, data)
   }
 
-  createRoom (from) {
-    const data = this.contract.methods.createRoom().encodeABI()
+  createRoom (from, name, amount) {
+    const value = this.provider.utils.toWei(amount.toString())
+    const data = this.contract.methods.createRoom(name, value).encodeABI()
     return this._sendTx(from, data)
   }
 

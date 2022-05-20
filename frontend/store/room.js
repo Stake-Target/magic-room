@@ -2,6 +2,10 @@ export const state = () => ({
   room: null
 })
 
+export const getters = {
+  roomIsActive: state => state.room && (state.room.active && state.room.lastActionTime + (24 * 60 * 60) > Date.now())
+}
+
 export const actions = {
   async init ({ commit }) {
     const room = await this.$web3.game.getCurrentRoom()

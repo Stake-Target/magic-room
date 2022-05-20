@@ -491,7 +491,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -543,7 +544,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -556,7 +558,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -612,7 +615,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -729,7 +733,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -32836,10 +32841,479 @@
   },
   "networks": {
     "1337": {
-      "events": {},
+      "events": {
+        "0xb60711d72e2238cb0a59f954dc67bc8c4c4ea86080c6dc849e7eda235d8b1293": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "roomId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "step",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "account",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    }
+                  ],
+                  "internalType": "struct MagicRoom.Member",
+                  "name": "enter",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "account",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    }
+                  ],
+                  "internalType": "struct MagicRoom.Member",
+                  "name": "leave",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "index",
+                  "type": "uint256"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct MagicRoom.ChairChangesInfo",
+              "name": "chairChanges",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "price",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "bank",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "steps",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "step",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "active",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "lastActionTime",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "chairs",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "names",
+                  "type": "string[]"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct MagicRoom.Room",
+              "name": "room",
+              "type": "tuple"
+            }
+          ],
+          "name": "ChangeChair",
+          "type": "event"
+        },
+        "0x4c536fd1e1e568a756991aa569a445d002f327eed825ab91e42da06a41a5d1a5": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "roomId",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "price",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "bank",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "steps",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "step",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "active",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "lastActionTime",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "chairs",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "names",
+                  "type": "string[]"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct MagicRoom.Room",
+              "name": "room",
+              "type": "tuple"
+            }
+          ],
+          "name": "FinishRoom",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        "0x8fd618cbe5cbf53112cc78a83d24e8e86e458bd853c2984d93b8aaf56af93d29": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "roomId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "step",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "account",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    }
+                  ],
+                  "internalType": "struct MagicRoom.Member",
+                  "name": "member",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "index",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct MagicRoom.RewardInfo",
+              "name": "reward",
+              "type": "tuple"
+            }
+          ],
+          "name": "Reward",
+          "type": "event"
+        },
+        "0xd0bfa42bb2bf31a3dd263ec57f37346ecea2558b4273db9e941855d1ced89eaf": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "roomId",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "id",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "price",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "bank",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "steps",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "step",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "active",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "lastActionTime",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "chairs",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "names",
+                  "type": "string[]"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct MagicRoom.Room",
+              "name": "room",
+              "type": "tuple"
+            }
+          ],
+          "name": "StartRoom",
+          "type": "event"
+        },
+        "0x83fc380a9d5549514bdd6f9eb1c0614f21442b80e7f0bb6bcd23f0c6decd7fc9": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "roomId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "step",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "account",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    }
+                  ],
+                  "internalType": "struct MagicRoom.Member",
+                  "name": "member",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "index",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct MagicRoom.RewardInfo",
+              "name": "reward",
+              "type": "tuple"
+            }
+          ],
+          "name": "Vip",
+          "type": "event"
+        },
+        "0x3613fabf6fc435a84d1c4464ad68dfcf90a2ecb0b6c84bee641028a370b03999": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "roomId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "step",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "components": [
+                    {
+                      "internalType": "address",
+                      "name": "account",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "name",
+                      "type": "string"
+                    }
+                  ],
+                  "internalType": "struct MagicRoom.Member",
+                  "name": "member",
+                  "type": "tuple"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "index",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct MagicRoom.RewardInfo",
+              "name": "reward",
+              "type": "tuple"
+            }
+          ],
+          "name": "Winner",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0xF57571a7d121F69A2082B9D9007894F631e14A78",
-      "transactionHash": "0x81f551405e39b0390de929b86e8195d01d17734fe71bee641df56670a2588c33"
+      "address": "0xb60634925867304CF4a4aACdFDd2937538F54862",
+      "transactionHash": "0x59ba4a72b51a9bd2bb7e3056cee7ffc7df106f7414823d856fcd35d4453288f2"
     },
     "5777": {
       "events": {
@@ -33055,7 +33529,8 @@
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-05-19T13:26:33.456Z",
+  "updatedAt": "2022-05-20T10:40:39.163Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {

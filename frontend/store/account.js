@@ -20,8 +20,8 @@ export const actions = {
     const owner = await this.$web3.game.isOwner(address)
     commit('account', { address, balance, tokenApproved, owner })
   },
-  setName ({ commit }, { address, name }) {
-    commit('name', { address, name })
+  setName ({ commit, state }, name) {
+    commit('name', { address: state.account.address, name })
   }
 }
 

@@ -2,7 +2,7 @@
   <div :class="$style.room">
     <div :class="$style.item">
       <div :class="$style.value">
-        <span>{{ room.step | number }}/165</span>
+        <span>{{ room.step | number }}/{{ room.steps | number }}</span>
       </div>
       <div :class="$style.title">Step</div>
     </div>

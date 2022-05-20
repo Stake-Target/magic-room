@@ -4,10 +4,10 @@
       <img :class="$style.ico" src="~/assets/images/coin.png" alt="" />
       <span :class="$style.value">{{ balance | number }}</span>
     </div>
-    <button :class="[$style.login, {[this.$style.disabled]: !!account}]" @click="onSignin">
+    <button :class="$style.login" @click="onSignin">
       <img src="@/assets/images/metamask-fox.svg" alt="" />
       <span>
-        <template v-if="account">{{ account.address | hash(2) }}</template>
+        <template v-if="account">{{ accountName }}</template>
         <template v-else>Sign In</template>
       </span>
     </button>
@@ -15,23 +15,38 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'SectionSignin',
   methods: {
     ...mapActions('account', ['signin']),
     async onSignin () {
-      try {
-        this.$spinner.start()
-        await this.signin()
-      } finally {
-        setTimeout(() => this.$spinner.stop(), 200)
+      if (this.account) {
+        this.$root.$emit('change-name')
+      } else {
+        try {
+          this.$spinner.start()
+          await this.signin()
+        } finally {
+          setTimeout(() => this.$spinner.stop(), 200)
+        }
       }
+    },
+    hash (value, start = 2, end = 5, length = 20) {
+      const str = value.toString()
+      const _max = Math.min(length, str.length)
+      const _end = Math.min(_max - end, 5)
+      const tail = str.slice(_end * -1)
+      return str.slice(0, start) + '...' + tail
     }
   },
   computed: {
     ...mapState('account', ['account']),
+    ...mapGetters('account', ['name']),
+    accountName () {
+      return this.name ? this.name : this.hash(this.account.address)
+    },
     balance () {
       return this.account ? this.account.balance : 0
     }
@@ -73,11 +88,15 @@ export default {
   position: relative;
   overflow: hidden;
   width: 180px;
+  text-overflow: ellipsis;
   &.disabled {
     pointer-events: none;
   }
   span {
     position: relative;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
     z-index: 2;
     transition: transform 0.3s ease;
   }

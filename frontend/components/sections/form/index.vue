@@ -26,14 +26,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions('account', ['signin']),
+    ...mapActions('account', ['signin', 'addApprovedTokens']),
     async onSubmit () {
       try {
         this.$spinner.start()
         if (this.account.tokenApproved < this.form.amount) {
           const approvalAmount = 10000000000000
           await this.$web3.token.approve(this.$web3.game.address, this.account.address, approvalAmount)
-          this.account.tokenApproved += approvalAmount
+          this.addApprovedTokens(approvalAmount)
         }
         if (this.roomIsActive) {
           await this.$web3.game.enterToRoom(this.account.address, this.name, this.form.amount)

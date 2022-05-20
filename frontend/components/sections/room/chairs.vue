@@ -5,12 +5,14 @@
       <img v-else src="~/assets/images/chair.blue.png" alt="" />
       <img :class="$style.man" v-if="chair.isMy" src="~/assets/images/man.green.png" alt="" />
       <img :class="$style.man" v-else-if="!chair.isEmpty" src="~/assets/images/man.blue.png" alt="" />
+      <div :class="$style.name" v-if="room.names[i]">{{ room.names[i] }}</div>
       <div :class="$style.events">
         <transition-group :name="$style.events" tag="div">
           <div :class="$style.event" v-for="event in events[i]" :key="event.id">
             <span :class="$style.icon">
               <template v-if="event.type === 'Vip'">🏵</template>
               <template v-else-if="event.type === 'Reward'">🏅</template>
+              <template v-else-if="event.type === 'Winner'">🏆</template>
             </span>
             <span>+</span>
             <img :class="$style.coin" src="~/assets/images/coin.png" alt="" />
@@ -53,17 +55,18 @@ export default {
   },
   methods: {
     addEvent (event) {
+      console.log('event', event)
       const id = Math.random()
-      const chairIndex = event.data.chairIndex
+      const chairIndex = event.data.reward.index
       this.events[chairIndex].push({
         id,
         type: event.event,
-        value: event.data.value
+        value: event.data.reward.value
       })
       setTimeout(() => {
         const index = this.events[chairIndex].findIndex(i => i.id === id)
         this.events[chairIndex].splice(index, 1)
-      }, 2000)
+      }, 4000)
     }
   },
   mounted() {
@@ -148,6 +151,18 @@ export default {
   right: 0;
   bottom: 0;
 }
+.name {
+  position: absolute;
+  left: 50%;
+  bottom: 20%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: inline-block;
+  padding: 4px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 13px;
+  transform: translate(-50%, 0);
+}
 .events {
   position: absolute;
   top: 40%;
@@ -188,6 +203,9 @@ export default {
     font-size: 12px;
     align-self: flex-end;
   }
+}
+.event + .event {
+  margin-top: 30px;
 }
 //
 //.events-enter-active,

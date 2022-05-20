@@ -5,7 +5,7 @@ export const actions = {
       dispatch('account/change', accounts[0])
     })
     this.$web3.game.addEventsListener((event) => {
-      if (event.event === 'ChangeChair') {
+      if (['ChangeChair', 'FinishRoom'].includes(event.event)) {
         dispatch('room/changeChair', event.data)
       }
     })

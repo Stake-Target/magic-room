@@ -58,6 +58,13 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.time = this.$date(this.timestamp)
+      this.calc()
+      if (this.update) {
+        this.interval = setInterval(this.calc, this.timeout)
+      }
+    },
     calc() {
       this.time.update()
       this.formatted = this.getFormatted()
@@ -126,14 +133,15 @@ export default {
     }
   },
   mounted() {
-    this.time = this.$date(this.timestamp)
-    this.calc()
-    if (this.update) {
-      this.interval = setInterval(this.calc, this.timeout)
-    }
+    this.init()
   },
   beforeDestroy() {
     clearInterval(this.interval)
+  },
+  watch: {
+    value () {
+      this.init()
+    }
   }
 }
 </script>

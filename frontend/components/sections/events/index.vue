@@ -4,44 +4,21 @@
     <div :class="$style.title">Events</div>
     <div :class="$style.data">
       <div v-for="event in events" :key="event.id">
-        <div :class="$style.event" v-if="event.event === 'Vip'">
-          <div :class="$style.icon">👟</div>
-          <div :class="$style.step">{{ event.data.step }}</div>
-          <div :class="$style.icon">🏵</div>
-          <div :class="$style.name">Vip</div>
-          <div :class="$style.address">{{ address(event.data.chair) }}</div>
-          <div :class="$style.value">
-            <img :class="$style.coin" src="~/assets/images/coin.png" />
-            {{ event.data.value }}
+        <section-events-event
+          v-if="['Winner', 'FinishRoom', 'Vip', 'Reward', 'ChangeChair', 'StartRoom'].includes(event.event)"
+          :type="event.event"
+          :timestamp="event.timestamp"
+          :step="event.data.step"
+          :reward="event.data.reward"
+          :chair-changes="event.data.chairChanges"
+        />
+
+        <template v-else>
+          <div :class="$style.event">
+            ===========
+            <pre>{{ event }}</pre>
           </div>
-        </div>
-        <div :class="$style.event" v-else-if="event.event === 'Reward'">
-          <div :class="$style.icon">👟</div>
-          <div :class="$style.step">{{ event.data.step }}</div>
-          <div :class="$style.icon">🏅</div>
-          <div :class="$style.name">Reward</div>
-          <div :class="$style.address">{{ address(event.data.chair) }}</div>
-          <div :class="$style.value">
-            <img :class="$style.coin" src="~/assets/images/coin.png" />
-            {{ event.data.value }}
-          </div>
-        </div>
-        <div :class="$style.event" v-else-if="event.event === 'ChangeChair'">
-          <div :class="$style.icon">👟</div>
-          <div :class="$style.step">{{ event.data.step }}</div>
-          <div :class="$style.icon">♻️</div>
-          <div :class="$style.name">Drop</div>
-          <div :class="$style.address">{{ address(event.data.enter) }}</div>
-          <div :class="$style.icon">🧹</div>
-          <div :class="$style.address">{{ address(event.data.leave) }}</div>
-          <div :class="$style.value">
-            <img :class="$style.coin" src="~/assets/images/coin.png" />
-            {{ event.data.price }}
-          </div>
-        </div>
-        <div :class="$style.event" v-else>
-          🏆 {{ event }}
-        </div>
+        </template>
       </div>
       <div v-if="!isFull" v-observe-visibility="{ callback: visibilityChanged }">
         <span>Loading...</span>
@@ -52,9 +29,13 @@
 
 <script>
 import { mapActions, mapState } from 'vuex'
+import SectionEventsEvent from "~/components/sections/events/event"
 
 export default {
   name: 'SectionEvents',
+  components: {
+    SectionEventsEvent
+  },
   data () {
     return {
       events: [],
@@ -67,8 +48,8 @@ export default {
   },
   methods: {
     async init () {
-      // this.$web3.game.addEventsListener(this.onEvent)
-      // await this.getPastEvents()
+      this.$web3.game.addEventsListener(this.onEvent)
+      await this.getPastEvents()
     },
     async getPastEvents () {
       if (this.loading) {

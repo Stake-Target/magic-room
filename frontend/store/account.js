@@ -20,6 +20,9 @@ export const actions = {
     const owner = await this.$web3.game.isOwner(address)
     commit('account', { address, balance, tokenApproved, owner })
   },
+  addApprovedTokens ({ commit }, amount) {
+    commit('addApprovedTokens', amount)
+  },
   setName ({ commit, state }, name) {
     commit('name', { address: state.account.address, name })
   }
@@ -31,5 +34,8 @@ export const mutations = {
   },
   name (state, { address, name }) {
     Vue.set(state.names, address, name)
+  },
+  addApprovedTokens (state, amount) {
+    state.account.tokenApproved = state.account.tokenApproved + amount
   }
 }

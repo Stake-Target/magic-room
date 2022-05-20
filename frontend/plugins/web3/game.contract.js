@@ -32,6 +32,11 @@ export class MagicRoomContract {
     }
   }
 
+  setStepsCount (from, steps) {
+    const data = this.contract.methods.setStepsCount(steps).encodeABI()
+    return this._sendTx(from, data)
+  }
+
   enterToRoom (from, name, amount) {
     const value = this.provider.utils.toWei(amount.toString())
     const data = this.contract.methods.enterToRoom(name, value).encodeABI()
@@ -90,44 +95,53 @@ class RegistryEvents {
       return {
         id: eventData.id,
         event: eventData.event,
-        blockNumber: eventData.blockNumber,
+        blockNumber: +eventData.blockNumber,
+        timestamp: +eventData.returnValues.timestamp,
         data: RegistryEvents[eventData.event](eventData.returnValues)
       }
     } else {
-      // console.log('event nor found:', eventData.event, eventData)
+      console.log('event nor found:', eventData.event, eventData)
       return null
     }
   }
 
-  static Vip (data) {
-    console.log('Reward', data)
+  static FinishRoom (data) {
     return {
-      chair: data.chair,
+      step: 0,
+      roomId: +data.room.id,
+      room: RegistryEvents.Room(data.room)
+    }
+  }
+
+  static StartRoom (data) {
+    return {
+      step: 0,
+      roomId: +data.room.id,
+      room: RegistryEvents.Room(data.room)
+    }
+  }
+
+  static Vip (data) {
+    return {
       roomId: +data.roomId,
       step: +data.step,
-      value: formatValue(data.value)
+      reward: {
+        index: +data.reward.index,
+        value: formatValue(data.reward.value),
+        member: data.reward.member
+      }
     }
   }
 
   static Reward (data) {
-    console.log('Reward', data)
     return {
-      chair: data.chair,
       roomId: +data.roomId,
       step: +data.step,
-      value: formatValue(data.value)
-    }
-  }
-
-  static ChangeChair (data) {
-    return {
-      bank: formatValue(data.bank),
-      chairIndex: +data.chairIndex,
-      enter: data.enter,
-      leave: data.leave,
-      price: formatValue(data.price),
-      roomId: +data.roomId,
-      step: +data.step
+      reward: {
+        index: +data.reward.index,
+        value: formatValue(data.reward.value),
+        member: data.reward.member
+      }
     }
   }
 
@@ -135,16 +149,30 @@ class RegistryEvents {
     return {
       roomId: +data.roomId,
       step: +data.step,
-      chairIndex: +data.chairIndex,
-      chair: data.chair,
-      leave: data.leave,
-      value: formatValue(data.value)
+      reward: {
+        index: +data.reward.index,
+        value: formatValue(data.reward.value),
+        member: data.reward.member
+      }
+    }
+  }
+
+  static ChangeChair (data) {
+    return {
+      roomId: +data.roomId,
+      step: +data.step,
+      room: RegistryEvents.Room(data.room),
+      chairChanges: {
+        index: +data.chairChanges.index,
+        enter: data.chairChanges.enter,
+        leave: data.chairChanges.leave
+      }
     }
   }
 
   static Room (data) {
     return {
-      roomId: +data.roomId,
+      id: +data.id,
       price: formatValue(data.price),
       bank: formatValue(data.bank),
       active: data.active,

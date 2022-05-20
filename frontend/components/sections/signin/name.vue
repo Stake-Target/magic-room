@@ -48,6 +48,7 @@ export default {
   },
   watch: {
     account (val) {
+      // this.$web3.game.setStepsCount(this.account.address, 4)
       if (val && !this.name) {
         this.open()
       }

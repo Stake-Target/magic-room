@@ -12,13 +12,7 @@ export const actions = {
     commit('room', room)
   },
   changeChair ({ commit, state }, data) {
-    if (state.room.roomId === data.roomId) {
-      commit('update', {
-        bank: data.bank,
-        price: data.price,
-        step: data.step
-      })
-    }
+    commit('update', data.room)
   }
 }
 

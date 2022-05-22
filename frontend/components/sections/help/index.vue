@@ -6,18 +6,46 @@
     </div>
     <div :class="[$style.helpWrap, {[$style.helpOpened]: showHelp}]">
       <div :class="$style.bg"></div>
-      <div :class="$style.container"></div>
+      <div :class="$style.container">
+        <div :class="$style.body">
+          <h1>HOW TO PLAY?</h1>
+          <h2>1) Install plugin <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Metamask</a></h2>
+          <h2>2) Add test <a href="https://medium.com/spartanprotocol/how-to-connect-metamask-to-bsc-testnet-7d89c111ab2">network BSC to Metamask</a></h2>
+          <ul>
+            <li><b>Network Name:</b> <input @click="copy($event.target)" value="BSC Testnet" readonly/></li>
+            <li><b>New RPC URL:</b> <input @click="copy($event.target)" value="https://data-seed-prebsc-1-s1.binance.org:8545" readonly/></li>
+            <li><b>ChainID:</b> <input @click="copy($event.target)" value="97" readonly/></li>
+            <li><b>Symbol:</b> <input @click="copy($event.target)" value="BNB" readonly/></li>
+            <li><b>Block Explorer URL:</b> <input @click="copy($event.target)" value="https://testnet.bscscan.com/" readonly/></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import copy from '@/utils/copy'
+
 export default {
   layout: 'page',
   name: 'SectionHelp',
   data () {
     return {
-      showHelp: false
+      showHelp: true
+    }
+  },
+  methods: {
+    copy ($input) {
+      copy($input.value)
+      const textEl = document.createElement('div')
+      textEl.innerHTML = 'Copied'
+      textEl.classList.add('copied')
+      textEl.style.left = `${$input.offsetLeft + $input.getBoundingClientRect().width + 20}px`
+      $input.parentElement.appendChild(textEl)
+      setTimeout(() => {
+        textEl.remove()
+      }, 1000)
     }
   }
 }
@@ -40,6 +68,51 @@ export default {
     transform: scale(0);
     transform-origin: 100% 0;
     transition: transform 1s cubic-bezier(0.25, 1.05, 0.98,-0.03);
+  }
+  .container {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .body {
+    padding: 50px;
+    font-size: 16px;
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    h2 {
+      font-size: 20px;
+      margin-top: 20px;
+    }
+    ul {
+      margin-top: 20px;
+      margin-left: 20px;
+      li {
+        margin-top: 6px;
+        position: relative;
+      }
+    }
+    a {
+      color: #fd8f35;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+    :global(.copied) {
+      position: absolute;
+      box-shadow: rgba(0, 0, 0, 0.4) 0 0 5px 0;
+      border-radius: 6px;
+      padding: 4px;
+      background-color: #2ebf2e;
+      top: -2px;
+      color: #fff;
+    }
   }
 }
 .help {

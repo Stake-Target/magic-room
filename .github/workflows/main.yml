@@ -1,4 +1,4 @@
-name: Vuild and deploy static
+name: Build and deploy static
 
 on:
   push:
@@ -19,10 +19,11 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           privateKey: ${{ secrets.KEY }}
-      - name: Build static
-        uses: appleboy/ssh-action@master
+          rmRemote: true
+      - name: Build static via ssh
+        uses: garygrossgarten/github-action-ssh@release
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          script: cd ${{ secrets.PATH }} && npm i && npm run build
+          privateKey: ${{ secrets.KEY }}
+          command: cd ${{ secrets.PATH }} && npm i && npm run build

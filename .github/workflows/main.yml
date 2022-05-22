@@ -12,9 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
             node-version: "16.13.1"
+      - name: w\o for sh spawn
+        run: npm cache verify
+        working-directory: ./frontend
       - name: Install deps
         run: npm ci
         working-directory: ./frontend

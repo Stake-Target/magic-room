@@ -1,4 +1,4 @@
-import Web3 from 'Web3'
+import Web3 from 'web3'
 import { MGTTokenContract } from "~/plugins/web3/token.contract"
 import { MagicRoomContract } from "~/plugins/web3/game.contract"
 

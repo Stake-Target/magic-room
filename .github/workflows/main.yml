@@ -26,4 +26,4 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           privateKey: ${{ secrets.KEY }}
-          command: cd ${{ secrets.PATH }} && npm i && npm run build
+          command: cd ${{ secrets.PATH }} && npm ci && npm run build

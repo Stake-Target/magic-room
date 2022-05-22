@@ -44,6 +44,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('room', ['room']),
     ...mapState('account', ['account'])
   },
   methods: {
@@ -57,9 +58,9 @@ export default {
       }
       try {
         this.loading = true
-        const toBlock = this.getLastBlockNumber()
+        // const toBlock = this.getLastBlockNumber()
         this.$spinner.start()
-        const events = await this.$web3.game.getPastEvents({ toBlock })
+        const events = await this.$web3.game.getPastEvents('allEvents', { filter: { roomId: this.room.id.toString() } })
         this.events = this.events.concat(events)
         if (!events.length) {
           this.isFull = true
@@ -81,7 +82,7 @@ export default {
     },
     visibilityChanged (isVisible) {
       if (isVisible) {
-        this.getPastEvents()
+        // this.getPastEvents()
       }
     },
     address (address) {

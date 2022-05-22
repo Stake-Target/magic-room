@@ -26,6 +26,7 @@ export class MagicRoomContract {
   async getCurrentRoom (from) {
     try {
       const result = await this.contract.methods.getCurrentRoom().call()
+      console.log('result', result)
       return RegistryEvents.Room(result)
     } catch (e) {
       return null
@@ -65,13 +66,18 @@ export class MagicRoomContract {
   async getPastEvents (options) {
     const _options = Object.assign({ toBlock: null, fromBlock: null }, options)
     const events = []
-    if (!_options.toBlock) {
-      _options.toBlock = await this.provider.eth.getBlockNumber()
-    }
-    if (!_options.fromBlock) {
-      _options.fromBlock = Math.max(0, _options.toBlock - 5)
-    }
+    // if (!_options.toBlock) {
+    //   _options.toBlock = await this.provider.eth.getBlockNumber()
+    // }
+    // if (!_options.fromBlock) {
+    //   _options.fromBlock = Math.max(0, _options.toBlock - 5)
+    // }
+    // await this.contract.getPastEvents('StartRoom', {}, (err, eventData) => {
+    //   console.log('StartRoom events', err, eventData)
+    // })
     await this.contract.getPastEvents('allEvents', _options, (err, eventData) => {
+      console.log('getPastEvents', err, eventData)
+
       if (!err) {
         return eventData.forEach((data) => {
           const _data = RegistryEvents.parse(data)
@@ -81,6 +87,7 @@ export class MagicRoomContract {
         })
       }
     })
+    console.log('events', events)
     return events.reverse()
   }
 

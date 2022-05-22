@@ -1,12 +1,12 @@
 <template>
   <div :class="classes">
     <section-signin :class="$style.signin" />
-    <section-events :class="$style.events" />
     <section-form :class="$style.form" />
 
     <template v-if="room">
       <section-room-info :class="$style.roomInfo" />
       <section-room-chairs :class="$style.chairs" />
+      <section-events :class="$style.events" />
     </template>
 
     <section-signin-name :class="$style.name" />
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import SectionEvents from "~/components/sections/events"
 import SectionSignin from "~/components/sections/signin"
 import SectionRoomInfo from "~/components/sections/room/info"
@@ -52,6 +52,17 @@ export default {
         [this.$style.authorized]: this.account
       }
     }
+  },
+  methods: {
+    ...mapActions('room', ['init']),
+    async load () {
+      this.$spinner.start()
+      await this.init()
+      this.$spinner.stop()
+    }
+  },
+  mounted() {
+    this.load()
   }
 }
 </script>

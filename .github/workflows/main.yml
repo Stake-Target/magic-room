@@ -16,7 +16,7 @@ jobs:
         with:
             node-version: "16.13.1"
       - name: Install deps
-        run: npm i
+        run: npm ci
         working-directory: ./frontend
       - name: Build static
         run: npm run build

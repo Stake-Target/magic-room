@@ -6,11 +6,12 @@
     </div>
     <div :class="[$style.helpWrap, {[$style.helpOpened]: showHelp}]">
       <div :class="$style.bg"></div>
-      <div :class="$style.container">
-        <div :class="$style.body">
+      <transition :name="$style.container">
+        <div :class="$style.container" v-if="showHelp">
+          <div :class="$style.body">
           <h1>HOW TO PLAY?</h1>
           <h2>1) Install plugin <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Metamask</a></h2>
-          <h2>2) Add test <a href="https://medium.com/spartanprotocol/how-to-connect-metamask-to-bsc-testnet-7d89c111ab2">network BSC to Metamask</a></h2>
+          <h2>2) Add test <a href="https://medium.com/spartanprotocol/how-to-connect-metamask-to-bsc-testnet-7d89c111ab2" target="_blank">network BSC to Metamask</a></h2>
           <ul>
             <li><b>Network Name:</b> <input @click="copy($event.target)" value="BSC Testnet" readonly/></li>
             <li><b>New RPC URL:</b> <input @click="copy($event.target)" value="https://data-seed-prebsc-1-s1.binance.org:8545" readonly/></li>
@@ -19,7 +20,8 @@
             <li><b>Block Explorer URL:</b> <input @click="copy($event.target)" value="https://testnet.bscscan.com/" readonly/></li>
           </ul>
         </div>
-      </div>
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -55,6 +57,7 @@ export default {
 .helpWrap {
   &.helpOpened .bg {
     transform: scale(0.9);
+    transition-delay: 0s;
   }
   .bg {
     position: fixed;
@@ -68,6 +71,7 @@ export default {
     transform: scale(0);
     transform-origin: 100% 0;
     transition: transform 1s cubic-bezier(0.25, 1.05, 0.98,-0.03);
+    transition-delay: 0.3s;
   }
   .container {
     position: fixed;
@@ -77,6 +81,18 @@ export default {
     width: 100%;
     height: 100%;
     overflow: hidden;
+    &:global(-enter-active) {
+      transition: all 0.5s ease;
+      transition-delay: 1s;
+    }
+    &:global(-leave-active) {
+      transition: all 0.5s ease;
+    }
+    &:global(-enter),
+    &:global(-leave-to) {
+      opacity: 0;
+      transform: translate(0, -20px);
+    }
   }
   .body {
     padding: 50px;
@@ -92,7 +108,7 @@ export default {
     }
     ul {
       margin-top: 20px;
-      margin-left: 20px;
+      margin-left: 40px;
       li {
         margin-top: 6px;
         position: relative;

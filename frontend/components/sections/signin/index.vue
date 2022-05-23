@@ -29,6 +29,7 @@ export default {
           this.$spinner.start()
           const address = await this.signin()
           await this.$web3.switchChain()
+          console.log('address', address)
           await this.initAddress(address)
         } finally {
           setTimeout(() => this.$spinner.stop(), 200)

@@ -9,8 +9,53 @@
       <transition :name="$style.container">
         <div :class="$style.container" v-if="showHelp">
           <div :class="$style.body">
+            <h1>Start</h1>
+            <h2>1) Install plugin <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Metamask</a></h2>
+            <h2>2) Import <a href="#" @click.prevent="$web3.addToken()">token MGT</a> to Metamask</h2>
+            <h2>2) Get <a href="https://testnet.binance.org/faucet-smart" target="_blank">BNB tokens</a></h2>
+            <h2>3) Get MGT token, <a href="https://t.me/whooooop" target="_blank">write your wallet address</a> :)</h2>
+            <br/>
+            <br/>
+
             <h1>HOW TO PLAY?</h1>
-            <h2>1) Import <a href="#" @click.prevent="$web3.addToken()">token MGT</a> to Metamask</h2>
+            <h2>1) Sign in with a metamask</h2>
+            <img style="margin-top: 10px" width="200px" src="@/assets/images/signin.jpg" alt=""/>
+
+            <h2>2) Enter your nickname and save</h2>
+            <img style="margin-top: 10px" width="300px" src="@/assets/images/name.jpg" alt=""/>
+
+            <h2>3) Sit on the couch and pay for the ticket</h2>
+            <img style="margin-top: 10px" width="300px" src="@/assets/images/sit.jpg" alt=""/>
+            <div>
+              <div>The cost of your ticket will be distributed in the following shares:</div>
+              <ul>
+                <li>1% - Fee</li>
+                <li>50% - In equal shares to all who sit</li>
+                <li>29% - Random seated</li>
+                <li>20% - To all who remain until the end</li>
+              </ul>
+            </div>
+
+            <h2>4) Sit on the couch and get MGT</h2>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; grid-gap: 20px">
+              <div>
+                <img style="margin-top: 10px" width="200px" src="@/assets/images/empty.jpg" alt=""/>
+                <div>Empty couch</div>
+              </div>
+              <div>
+                <img style="margin-top: 10px" width="200px" src="@/assets/images/me.jpg" alt=""/>
+                <div>In the green t-shirt is that you</div>
+              </div>
+              <div>
+                <img style="margin-top: 10px" width="200px" src="@/assets/images/other.jpg" alt=""/>
+                <div>someone else in a blue t-shirt</div>
+              </div>
+            </div>
+
+            <h2>5) Important!</h2>
+            <div>It’s more difficult to get on the red couch, but you won’t leave it soon either :)</div>
+            <h2>6) GOOD LUCK!</h2>
 
             <input v-if="false" @click="copy($event.target)" value="BNB" readonly/>
           </div>
@@ -74,7 +119,7 @@ export default {
     left: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    overflow: auto;
     &:global(-enter-active) {
       transition: all 0.5s ease;
       transition-delay: 1s;

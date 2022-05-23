@@ -5,18 +5,37 @@ export class MagicRoomContract {
   constructor (provider, data) {
     this.address = data.address
     this.provider = provider
+    this.genesisBlock = 19546769
     this.contract = new this.provider.eth.Contract(MagicRoom.abi, this.address)
     this._listeners = []
+    this._updateListeners = []
+    this.latestBlock = null
+    this.watch()
+    // this.contract.events.allEvents({}, (err, event) => {
+    //   if (!err) {
+    //     const data = RegistryEvents.parse(event)
+    //     if (data) {
+    //       this._listeners.forEach(cb => cb(data))
+    //     }
+    //   }
+    // })
+  }
 
-    this.contract.events.allEvents({}, (err, event) => {
-      console.log('event', err, event)
-      if (!err) {
-        const data = RegistryEvents.parse(event)
-        if (data) {
-          this._listeners.forEach(cb => cb(data))
+  async watch () {
+    await new Promise(resolve => setTimeout(resolve, 4000))
+    const latestBlock = await this.provider.eth.getBlockNumber()
+    if (latestBlock !== this.latestBlock) {
+      if (this.latestBlock) {
+        const result = await this.getPastEvents({ toBlock: latestBlock, fromBlock: this.latestBlock + 1 })
+        const events = result.events.reverse()
+        events.forEach(event => this._listeners.forEach(cb => cb(event)))
+        if (events.length) {
+          this._updateListeners.forEach(cb => cb(events))
         }
       }
-    })
+      this.latestBlock = latestBlock
+    }
+    this.watch()
   }
 
   async isOwner (address) {
@@ -66,22 +85,17 @@ export class MagicRoomContract {
   async getPastEvents (options) {
     // const _options = Object.assign({ toBlock: '19527838', fromBlock: '19527838' }, options)
     const _options = Object.assign({}, options)
-    _options.fromBlock = 19546880
-    _options.toBlock = 'latest'
     const events = []
-    // if (!_options.toBlock) {
-    //   _options.toBlock = await this.provider.eth.getBlockNumber()
-    // }
-    // if (!_options.fromBlock) {
-    //   _options.fromBlock = Math.max(0, _options.toBlock - 5)
-    // }
+    if (!_options.toBlock) {
+      _options.toBlock = await this.provider.eth.getBlockNumber()
+    }
+    if (!_options.fromBlock) {
+      _options.fromBlock = Math.max(this.genesisBlock, _options.toBlock - 1000)
+    }
     // await this.contract.getPastEvents('StartRoom', {}, (err, eventData) => {
     //   console.log('StartRoom events', err, eventData)
     // })
-    console.log('_options', _options)
     await this.contract.getPastEvents('allEvents', _options, (err, eventData) => {
-      console.log('getPastEvents', err, eventData)
-
       if (!err) {
         return eventData.forEach((data) => {
           const _data = RegistryEvents.parse(data)
@@ -91,12 +105,19 @@ export class MagicRoomContract {
         })
       }
     })
-    console.log('events', events)
-    return events.reverse()
+    return {
+      events: events.reverse(),
+      fromBlock: _options.fromBlock,
+      toBlock: _options.toBlock
+    }
   }
 
   addEventsListener (cb) {
     this._listeners.push(cb)
+  }
+
+  addUpdateListener (cb) {
+    this._updateListeners.push(cb)
   }
 }
 
@@ -111,7 +132,7 @@ class RegistryEvents {
         data: RegistryEvents[eventData.event](eventData.returnValues)
       }
     } else {
-      console.log('event nor found:', eventData.event, eventData)
+      // console.log('event nor found:', eventData.event, eventData)
       return null
     }
   }

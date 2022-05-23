@@ -10,15 +10,21 @@ export const getters = {
 }
 
 export const actions = {
-  signin ({ dispatch }) {
-    return window.ethereum.request({ method: 'eth_requestAccounts' })
+  async signin ({ dispatch }) {
+    const result = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    return result[0]
   },
   async initAddress ({ commit }, address) {
     if (address) {
       const balance = await this.$web3.token.getBalance(address)
       const tokenApproved = await this.$web3.token.allowance(this.$web3.game.address, address)
-      const owner = await this.$web3.game.isOwner(address)
-      commit('account', { address, balance, tokenApproved, owner })
+      commit('account', { address, balance, tokenApproved })
+    }
+  },
+  async updateBalance ({ commit, state }) {
+    if (state.account) {
+      const balance = await this.$web3.token.getBalance(state.account.address)
+      commit('balance', balance)
     }
   },
   addApprovedTokens ({ commit }, amount) {
@@ -32,6 +38,9 @@ export const actions = {
 export const mutations = {
   account (state, data = null) {
     state.account = data
+  },
+  balance (state, balance = 0) {
+    state.account.balance = balance
   },
   name (state, { address, name }) {
     Vue.set(state.names, address, name)

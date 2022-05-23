@@ -65,7 +65,9 @@ export default {
 
         const provider = await detectEthereumProvider()
         window.ethereum.on('chainChanged', _chainId => window.location.reload())
-
+        window.ethereum.on('message', (message) => {
+          console.log('message', message)
+        })
         if (typeof window.ethereum !== 'undefined') {
           await this.$web3.switchChain()
           await this.initAddress(provider.selectedAddress)

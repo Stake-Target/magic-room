@@ -55,7 +55,6 @@ export default {
   },
   methods: {
     addEvent (event) {
-      console.log('event', event)
       const id = Math.random()
       const chairIndex = event.data.reward.index
       this.events[chairIndex].push({

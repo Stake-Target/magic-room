@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 abstract contract Tokenomic is Ownable {
   IERC20 token;
-  Tokenomics tokenomics = Tokenomics(1, 50, 28, 20);
+  Tokenomics tokenomics = Tokenomics(1, 50, 29, 20);
 
   uint minPrice = 1 * 10 ** 18;
   uint balance = 0;

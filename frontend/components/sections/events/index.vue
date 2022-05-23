@@ -40,12 +40,16 @@ export default {
     return {
       events: [],
       loading: false,
-      isFull: false
+      needLoad: false,
+      fromBlock: null
     }
   },
   computed: {
     ...mapState('room', ['room']),
-    ...mapState('account', ['account'])
+    ...mapState('account', ['account']),
+    isFull () {
+      return this.fromBlock === this.$web3.game.genesisBlock
+    }
   },
   methods: {
     async init () {
@@ -53,22 +57,20 @@ export default {
       await this.getPastEvents()
     },
     async getPastEvents () {
-      if (this.loading) {
+      if (this.loading || !this.needLoad || this.isFull) {
         return
       }
       try {
+        this.$spinner.start()
         this.loading = true
         // const toBlock = this.getLastBlockNumber()
-        this.$spinner.start()
-        const events = await this.$web3.game.getPastEvents({ filter: { roomId: 'lox' } })
-        // const events = await this.$web3.game.getPastEvents({})
+        const { events, fromBlock } = await this.$web3.game.getPastEvents({ toBlock: this.fromBlock })
+        this.fromBlock = fromBlock
         this.events = this.events.concat(events)
-        if (!events.length) {
-          this.isFull = true
-        }
       } finally {
         this.loading = false
         this.$spinner.stop()
+        this.getPastEvents()
       }
     },
     getLastBlockNumber () {
@@ -82,9 +84,8 @@ export default {
       this.events.unshift(data)
     },
     visibilityChanged (isVisible) {
-      if (isVisible) {
-        // this.getPastEvents()
-      }
+      this.needLoad = isVisible
+      this.getPastEvents()
     },
     address (address) {
       if (this.account && this.account.address.toUpperCase() === address.toUpperCase()) {

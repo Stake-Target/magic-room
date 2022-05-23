@@ -22,6 +22,9 @@ export default {
   methods: {
     ...mapActions('account', ['signin', 'initAddress']),
     async onSignin () {
+      if (typeof window.ethereum === 'undefined') {
+        return alert('Install metamask!')
+      }
       if (this.account) {
         this.$root.$emit('change-name')
       } else {

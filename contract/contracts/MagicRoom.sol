@@ -10,12 +10,12 @@ contract MagicRoom is Randomize, Tokenomic {
 
   constructor(address _tokenAddress) Tokenomic(_tokenAddress) {}
 
-  event StartRoom(uint256 timestamp, uint roomId, Room room);
-  event FinishRoom(uint256 timestamp, uint roomId, Room room);
-  event Vip(uint256 timestamp, uint roomId, uint step, RewardInfo reward);
-  event Reward(uint256 timestamp, uint roomId, uint step, RewardInfo reward);
-  event Winner(uint256 timestamp, uint roomId, uint step, RewardInfo reward);
-  event ChangeChair(uint256 timestamp, uint roomId, uint step, ChairChangesInfo chairChanges, Room room);
+  event StartRoom(uint256 timestamp, uint indexed roomId, Room room);
+  event FinishRoom(uint256 timestamp, uint indexed roomId, Room room);
+  event Vip(uint256 timestamp, uint indexed roomId, uint step, RewardInfo reward);
+  event Reward(uint256 timestamp, uint indexed roomId, uint step, RewardInfo reward);
+  event Winner(uint256 timestamp, uint indexed roomId, uint step, RewardInfo reward);
+  event ChangeChair(uint256 timestamp, uint indexed roomId, uint step, ChairChangesInfo chairChanges, Room room);
 
   struct Room {
     uint id;

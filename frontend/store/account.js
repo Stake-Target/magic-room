@@ -10,15 +10,16 @@ export const getters = {
 }
 
 export const actions = {
-  async signin ({ dispatch }) {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    dispatch('change', accounts[0])
+  signin ({ dispatch }) {
+    return window.ethereum.request({ method: 'eth_requestAccounts' })
   },
-  async change ({ commit }, address) {
-    const balance = await this.$web3.token.getBalance(address)
-    const tokenApproved = await this.$web3.token.allowance(this.$web3.game.address, address)
-    const owner = await this.$web3.game.isOwner(address)
-    commit('account', { address, balance, tokenApproved, owner })
+  async initAddress ({ commit }, address) {
+    if (address) {
+      const balance = await this.$web3.token.getBalance(address)
+      const tokenApproved = await this.$web3.token.allowance(this.$web3.game.address, address)
+      const owner = await this.$web3.game.isOwner(address)
+      commit('account', { address, balance, tokenApproved, owner })
+    }
   },
   addApprovedTokens ({ commit }, amount) {
     commit('addApprovedTokens', amount)

@@ -1,10 +1,10 @@
 import MagicToken from "~/../contract/build/contracts/MagicToken.json"
 
 export class MGTTokenContract {
-  constructor (provider, address) {
-    this.address = address
+  constructor (provider, data) {
+    this.address = data.address
     this.provider = provider
-    this.contract = new this.provider.eth.Contract(MagicToken.abi, address)
+    this.contract = new this.provider.eth.Contract(MagicToken.abi, this.address)
   }
 
   async allowance (contractAddress, account) {

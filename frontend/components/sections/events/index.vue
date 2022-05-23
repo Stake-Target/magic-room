@@ -60,7 +60,8 @@ export default {
         this.loading = true
         // const toBlock = this.getLastBlockNumber()
         this.$spinner.start()
-        const events = await this.$web3.game.getPastEvents('allEvents', { filter: { roomId: this.room.id.toString() } })
+        const events = await this.$web3.game.getPastEvents({ filter: { roomId: 'lox' } })
+        // const events = await this.$web3.game.getPastEvents({})
         this.events = this.events.concat(events)
         if (!events.length) {
           this.isFull = true

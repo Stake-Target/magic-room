@@ -10,19 +10,9 @@
         <div :class="$style.container" v-if="showHelp">
           <div :class="$style.body">
             <h1>HOW TO PLAY?</h1>
-            <h2>1) Install plugin <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">Metamask</a></h2>
-            <h2>2) Add test <a href="https://medium.com/spartanprotocol/how-to-connect-metamask-to-bsc-testnet-7d89c111ab2" target="_blank">network BSC to Metamask</a></h2>
-            <ul>
-              <li><b>Network Name:</b> <input @click="copy($event.target)" value="BSC Testnet" readonly/></li>
-              <li><b>New RPC URL:</b> <input @click="copy($event.target)" value="https://data-seed-prebsc-1-s1.binance.org:8545" readonly/></li>
-              <li><b>ChainID:</b> <input @click="copy($event.target)" value="97" readonly/></li>
-              <li><b>Symbol:</b> <input @click="copy($event.target)" value="BNB" readonly/></li>
-              <li><b>Block Explorer URL:</b> <input @click="copy($event.target)" value="https://testnet.bscscan.com/" readonly/></li>
-            </ul>
-            <h2>3) Import <a href="https://www.alphr.com/add-token-metamask/#:~:text=Open%20the%20Metamask%20extension%20browser,list%20and%20hit%20%E2%80%9CNext.%E2%80%9D" target="_blank">token MGT</a></h2>
-            <ul>
-              <li><b>Token address:</b> <input @click="copy($event.target)" :value="$web3.token.address" readonly/></li>
-            </ul>
+            <h2>1) Import <a href="#" @click.prevent="$web3.addToken()">token MGT</a> to Metamask</h2>
+
+            <input v-if="false" @click="copy($event.target)" value="BNB" readonly/>
           </div>
         </div>
       </transition>

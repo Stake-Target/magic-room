@@ -20,14 +20,16 @@ import { mapActions, mapState, mapGetters } from 'vuex'
 export default {
   name: 'SectionSignin',
   methods: {
-    ...mapActions('account', ['signin']),
+    ...mapActions('account', ['signin', 'initAddress']),
     async onSignin () {
       if (this.account) {
         this.$root.$emit('change-name')
       } else {
         try {
           this.$spinner.start()
-          await this.signin()
+          const address = await this.signin()
+          await this.$web3.switchChain()
+          await this.initAddress(address)
         } finally {
           setTimeout(() => this.$spinner.stop(), 200)
         }

@@ -2,13 +2,14 @@ import MagicRoom from "~/../contract/build/contracts/MagicRoom.json"
 import Web3 from "web3"
 
 export class MagicRoomContract {
-  constructor (provider, address) {
-    this.address = address
+  constructor (provider, data) {
+    this.address = data.address
     this.provider = provider
-    this.contract = new this.provider.eth.Contract(MagicRoom.abi, address)
+    this.contract = new this.provider.eth.Contract(MagicRoom.abi, this.address)
     this._listeners = []
 
     this.contract.events.allEvents({}, (err, event) => {
+      console.log('event', err, event)
       if (!err) {
         const data = RegistryEvents.parse(event)
         if (data) {
@@ -26,7 +27,6 @@ export class MagicRoomContract {
   async getCurrentRoom (from) {
     try {
       const result = await this.contract.methods.getCurrentRoom().call()
-      console.log('result', result)
       return RegistryEvents.Room(result)
     } catch (e) {
       return null
@@ -64,7 +64,10 @@ export class MagicRoomContract {
   }
 
   async getPastEvents (options) {
-    const _options = Object.assign({ toBlock: null, fromBlock: null }, options)
+    // const _options = Object.assign({ toBlock: '19527838', fromBlock: '19527838' }, options)
+    const _options = Object.assign({}, options)
+    _options.fromBlock = 19546880
+    _options.toBlock = 'latest'
     const events = []
     // if (!_options.toBlock) {
     //   _options.toBlock = await this.provider.eth.getBlockNumber()
@@ -75,6 +78,7 @@ export class MagicRoomContract {
     // await this.contract.getPastEvents('StartRoom', {}, (err, eventData) => {
     //   console.log('StartRoom events', err, eventData)
     // })
+    console.log('_options', _options)
     await this.contract.getPastEvents('allEvents', _options, (err, eventData) => {
       console.log('getPastEvents', err, eventData)
 

@@ -28,6 +28,8 @@ import SectionHelp from "~/components/sections/help"
 import SectionForm from "~/components/sections/form"
 import SectionLoading from "~/components/sections/loading"
 import SectionSigninName from "~/components/sections/signin/name"
+import detectEthereumProvider from '@metamask/detect-provider'
+// import MetaMaskOnboarding from '@metamask/onboarding'
 
 export default {
   layout: 'page',
@@ -54,15 +56,27 @@ export default {
     }
   },
   methods: {
-    ...mapActions('room', ['init']),
-    async load () {
+    ...mapActions('room', { loadRoom: 'init' }),
+    ...mapActions('account', ['initAddress']),
+    async init () {
       this.$spinner.start()
-      await this.init()
-      this.$spinner.stop()
+      try {
+        await this.loadRoom()
+
+        const provider = await detectEthereumProvider()
+        window.ethereum.on('chainChanged', _chainId => window.location.reload())
+
+        if (typeof window.ethereum !== 'undefined') {
+          await this.$web3.switchChain()
+          await this.initAddress(provider.selectedAddress)
+        }
+      } finally {
+        this.$spinner.stop()
+      }
     }
   },
   mounted() {
-    this.load()
+    this.init()
   }
 }
 </script>

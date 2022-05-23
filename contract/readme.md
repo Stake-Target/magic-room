@@ -14,7 +14,6 @@ https://trufflesuite.com/docs/truffle/getting-started/running-migrations/
 
 
 # BSC
-
 * [how deploy](https://docs.binance.org/smart-chain/developer/deploy/truffle.html)
 * [test network](https://medium.com/spartanprotocol/how-to-connect-metamask-to-bsc-testnet-7d89c111ab2)
   * Network Name: BSC Testnet

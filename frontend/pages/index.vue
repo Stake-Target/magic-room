@@ -11,7 +11,7 @@
 
     <section-signin-name :class="$style.name" />
 
-    <section-bubbles />
+    <section-bubbles v-if="false" />
     <section-help />
     <section-controls :class="$style.controls" />
     <section-loading :style="loadingStyle" />

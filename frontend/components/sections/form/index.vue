@@ -1,7 +1,15 @@
 <template>
   <form :class="classes" @submit.prevent="onSubmit">
-    <span :class="$style.title">Your entry price (min: {{ minValue }})</span>
-    <input :class="$style.input" :min="minValue" :max="maxValue" type="number" placeholder="0" v-model="form.amount">
+    <div :class="$style.auto">
+      <input v-model="autoValue" @change="onChangeAutoValue" type="range" min="1" max="4" step="1">
+      <div :class="$style.legend">
+        <span>Min</span>
+        <span>25%</span>
+        <span>50%</span>
+        <span>100%</span>
+      </div>
+    </div>
+    <input :class="$style.input" @input="onChangeInput" :min="minValue" :max="maxValue" type="number" placeholder="0" v-model="form.amount">
     <div :class="$style.errors">
       <div v-if="form.amount && +form.amount > account.balance">Insufficient fund</div>
       <div v-else-if="form.amount && form.amount < minValue">Small amount</div>
@@ -20,6 +28,8 @@ export default {
   name: 'SectionForm',
   data () {
     return {
+      autoValue: 1,
+      automatic: true,
       form: {
         amount: ''
       }
@@ -44,7 +54,32 @@ export default {
       } catch (e) {} finally {
         this.$spinner.stop()
       }
+    },
+    onChangeInput () {
+      this.automatic = false
+    },
+    onChangeAutoValue () {
+      this.automatic = true
+      this.autoSet()
+    },
+    getAutoAmount () {
+      switch (this.autoValue) {
+        case '1': return this.minValue
+        case '2': return this.minValue + Math.floor(this.minValue * 25 / 100)
+        case '3': return this.minValue + Math.floor(this.minValue * 50 / 100)
+        case '4': return this.minValue + this.minValue
+      }
+    },
+    autoSet () {
+      if (this.automatic && this.account) {
+        this.form.amount = this.getAutoAmount()
+      }
     }
+  },
+  mounted() {
+    // setTimeout(() => {
+    //   this.form.amount = 100
+    // }, 2000)
   },
   computed: {
     ...mapGetters('room', ['roomIsActive']),
@@ -70,6 +105,11 @@ export default {
         }
       ]
     }
+  },
+  watch: {
+    minValue () {
+      this.autoSet()
+    }
   }
 }
 </script>
@@ -88,6 +128,26 @@ export default {
     }
     .button {
       pointer-events: none;
+    }
+  }
+}
+.auto {
+  position: absolute;
+  top: 5px;
+  left: 20px;
+  .legend {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 5px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    span {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 3px;
+      transform: rotate(-70deg);
     }
   }
 }

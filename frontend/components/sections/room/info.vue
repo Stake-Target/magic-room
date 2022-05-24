@@ -54,6 +54,10 @@ export default {
 .item {
   padding: 20px;
   font-weight: bold;
+  background-color: rgba(#d6e8ff, 0.1);
+  border-radius: 50px;
+  margin: 0 5px;
+  color: #fff;
   &:nth-child(1) {
     transform: rotate(2deg);
   }

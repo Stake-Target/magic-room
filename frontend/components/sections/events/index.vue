@@ -1,6 +1,8 @@
 <template>
   <div :class="$style.events">
-    <div :class="$style.head"></div>
+    <div :class="$style.head">
+      <span v-for="i in 7" :key="i"></span>
+    </div>
     <div :class="$style.title">Events</div>
     <div :class="$style.data">
       <div v-for="(event, i) in events" :key="event.id">
@@ -102,10 +104,29 @@ export default {
 .events {
   border: 10px solid #000;
   background: #fff;
+  border-radius: 20px;
 }
 .head {
   margin: 20px;
-  border-top: 40px dotted var(--theme-bg);
+  display: flex;
+  justify-content: space-between;
+  span {
+    position: relative;
+    background-color: var(--theme-bg);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    &:after {
+      content: "";
+      position: absolute;
+      width: 8px;
+      height: 70px;
+      background-color: #000;
+      bottom: 10px;
+      transform: rotate(-18deg);
+      left: 20%
+    }
+  }
 }
 .data {
   padding: 20px;

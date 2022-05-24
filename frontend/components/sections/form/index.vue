@@ -117,7 +117,7 @@ export default {
   transition: all 0.2s ease;
   font-size: 16px;
   font-weight: bold;
-  border-radius: 0 0 25px 0;
+  border-radius: 40px 0 25px 0;
 
   &:hover {
     background-color: #51ea38;

@@ -65,6 +65,7 @@ export default {
   display: flex;
   border: 15px solid #ffd116;
   background-color: #fff;
+  border-radius: 40px 0 40px 0;
 }
 .balance {
   display: flex;
@@ -95,6 +96,7 @@ export default {
   overflow: hidden;
   width: 180px;
   text-overflow: ellipsis;
+  border-radius: 40px 0 25px 0;
   &.disabled {
     pointer-events: none;
   }

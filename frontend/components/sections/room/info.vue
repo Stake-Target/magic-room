@@ -22,7 +22,7 @@
     </div>
     <div :class="$style.item">
       <div :class="$style.value">
-        <ui-date :value="room.lastActionTime + 24 * 60 * 60" to-ms format="future-time" update :timeout="1000" />
+        <ui-date :value="room.lastActionTime + 10 * 60" to-ms format="future-time" update :timeout="1000" />
       </div>
       <div :class="$style.title"><span :class="$style.emoji">🕗</span> Timeout</div>
     </div>

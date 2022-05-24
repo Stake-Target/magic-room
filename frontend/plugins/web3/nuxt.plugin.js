@@ -27,7 +27,7 @@ const tokenData = {
   decimals: '18'
 }
 const gameData = {
-  address: '0xb229D89118f8e6DC27DA022ecfDB163E5F37e88e'
+  address: '0x77eBf87eA328532a5354e64dC5588123f07DBC75'
 }
 
 export default function ({ app }, inject) {

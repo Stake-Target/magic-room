@@ -4,9 +4,9 @@ import "./randomize.sol";
 import "./tokenomic.sol";
 
 contract MagicRoom is Randomize, Tokenomic {
-  mapping(uint256 => Room) public rooms;
+  mapping(uint256 => Room) rooms;
   uint roomCount = 0;
-  uint idleTime = 1 days;
+  uint public idleTime = 10 minutes;
 
   constructor(address _tokenAddress) Tokenomic(_tokenAddress) {}
 
@@ -84,6 +84,10 @@ contract MagicRoom is Randomize, Tokenomic {
 
   function setStepsCount(uint count) external onlyOwner {
     rooms[roomCount].steps = count;
+  }
+
+  function setIdleTime(uint _idleTime) external onlyOwner {
+    idleTime = _idleTime;
   }
 
   function createRoom(string calldata _name, uint _amount) external availableName(_name) currentRoomIsNotActive {

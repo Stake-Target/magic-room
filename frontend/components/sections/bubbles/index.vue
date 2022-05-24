@@ -39,6 +39,16 @@ export default {
     }
   }
 }
+.circle {
+  display: grid;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  grid-template-columns: repeat(20, 1fr);
+}
 .bubblesTop {
   position: absolute;
   top: 5px;

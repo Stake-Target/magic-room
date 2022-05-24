@@ -3,24 +3,18 @@
     <div :class="$style.head"></div>
     <div :class="$style.title">Events</div>
     <div :class="$style.data">
-      <div v-for="event in events" :key="event.id">
+      <div v-for="(event, i) in events" :key="event.id">
         <section-events-event
-          v-if="['Winner', 'FinishRoom', 'Vip', 'Reward', 'ChangeChair', 'StartRoom'].includes(event.event)"
           :type="event.event"
           :timestamp="event.timestamp"
           :step="event.data.step"
+          :prev-step="events[i - 1] && events[i - 1].data.step"
           :reward="event.data.reward"
+          :room="event.data.room"
           :chair-changes="event.data.chairChanges"
         />
-
-        <template v-else>
-          <div :class="$style.event">
-            ===========
-            <pre>{{ event }}</pre>
-          </div>
-        </template>
       </div>
-      <div v-if="!isFull" v-observe-visibility="{ callback: visibilityChanged }">
+      <div :class="$style.loading" v-if="!isFull" v-observe-visibility="{ callback: visibilityChanged }">
         <span>Loading...</span>
       </div>
     </div>
@@ -111,7 +105,7 @@ export default {
 }
 .head {
   margin: 20px;
-  border-top: 40px dotted #e08331;
+  border-top: 40px dotted var(--theme-bg);
 }
 .data {
   padding: 20px;
@@ -149,5 +143,8 @@ export default {
 }
 .address {
   margin: 0 5px;
+}
+.loading {
+  padding: 10px 0;
 }
 </style>

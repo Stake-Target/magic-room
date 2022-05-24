@@ -13,7 +13,7 @@
 
     <section-bubbles />
     <section-help />
-    <section-loading />
+    <section-loading :style="loadingStyle" />
   </div>
 </template>
 
@@ -53,6 +53,13 @@ export default {
         [this.$style.app]: true,
         [this.$style.authorized]: this.account
       }
+    },
+    loadingStyle () {
+      if (!this.room) {
+        return { right: '50%', bottom: '50%' }
+      } else {
+        return {}
+      }
     }
   },
   methods: {
@@ -84,11 +91,14 @@ export default {
 
 <style lang="scss" module>
 .app {
+  --theme-bg: #78aca7;
+  --decor-size: 30px;
+
   font-family: "Comic Sans MS";
   min-height: 100vh;
-  background-color: rgba(236, 133, 75, 0.94);
+  background: var(--theme-bg) url("@/assets/images/sky.svg") no-repeat;
+  background-size: 200%;
   position: relative;
-  --decor-size: 30px;
 }
 .signin {
   position: fixed;
@@ -139,9 +149,4 @@ export default {
   }
 }
 .name {}
-.admin {
-  position: fixed;
-  bottom: 40px;
-  left: 45%;
-}
 </style>

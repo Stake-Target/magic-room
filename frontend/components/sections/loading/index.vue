@@ -15,6 +15,7 @@ export default {
   position: fixed;
   bottom: 20px;
   right: 20px;
+  transition: all 0.5s $transition-bounce;
   .spinner,
   .spinner::after {
     border-radius: 50%;

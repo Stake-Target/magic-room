@@ -79,6 +79,7 @@ export default {
 <style lang="scss" module>
 .form {
   border: 15px solid #ffd116;
+  border-radius: 40px 0 40px 0;
   background-color: #fff;
   width: 500px;
   display: flex;
@@ -106,6 +107,7 @@ export default {
   text-indent: 20px;
   flex: 1 1;
   border: 0;
+  border-radius: 40px 0 0 0;
 }
 .button {
   border: 10px solid black;
@@ -115,6 +117,8 @@ export default {
   transition: all 0.2s ease;
   font-size: 16px;
   font-weight: bold;
+  border-radius: 0 0 25px 0;
+
   &:hover {
     background-color: #51ea38;
     border-color: #42b983;

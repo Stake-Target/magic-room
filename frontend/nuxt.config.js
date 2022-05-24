@@ -65,7 +65,7 @@ export default {
         loader: 'raw-loader'
       })
       config.module.rules.push({
-        test: /\.(mp3|mp4)$/,
+        test: /\.(mp3|mp4|cur)$/,
         loader: 'file-loader'
       })
     },

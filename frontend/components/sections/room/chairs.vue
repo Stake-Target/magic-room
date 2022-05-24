@@ -1,27 +1,29 @@
 <template>
   <div :class="$style.room">
-    <div :class="$style.chair" v-for="(chair, i) in chairs" :key="chair.index">
-      <ui-pouf
-        :class="$style.pouf"
-        :priority="chair.isPriority"
-        :my="chair.isMy"
-        :empty="chair.isEmpty"
-      />
-      <div :class="$style.name" v-if="room.names[i]">{{ room.names[i] }}</div>
-      <div :class="$style.events">
-        <transition-group :name="$style.events" tag="div">
-          <div :class="$style.event" v-for="event in events[i]" :key="event.id">
-            <span :class="$style.icon">
-              <template v-if="event.type === 'Vip'">🏵</template>
-              <template v-else-if="event.type === 'Reward'">🏅</template>
-              <template v-else-if="event.type === 'Winner'">🏆</template>
-            </span>
-            <span>+</span>
-            <img :class="$style.coin" src="~/assets/images/coin.png" alt="" />
-            <span>{{ event.value | number }}</span>
-            <span :class="$style.currency">MGT</span>
-          </div>
-        </transition-group>
+    <div :class="$style.item" v-for="(chair, i) in chairs" :key="chair.index" ref="poufs" @click="onTouch(i)">
+      <div :class="$style.chair">
+        <ui-pouf
+          :class="$style.pouf"
+          :priority="chair.isPriority"
+          :my="chair.isMy"
+          :empty="chair.isEmpty"
+        />
+        <div :class="$style.name" v-if="room.names[i]">{{ room.names[i] }}</div>
+        <div :class="$style.events">
+          <transition-group :name="$style.events" tag="div">
+            <div :class="$style.event" v-for="event in events[i]" :key="event.id">
+              <span :class="$style.icon">
+                <template v-if="event.type === 'Vip'">🏵</template>
+                <template v-else-if="event.type === 'Reward'">🏅</template>
+                <template v-else-if="event.type === 'Winner'">🏆</template>
+              </span>
+              <span>+</span>
+              <img :class="$style.coin" src="~/assets/images/coin.png" alt="" />
+              <span>{{ event.value | number }}</span>
+              <span :class="$style.currency">MGT</span>
+            </div>
+          </transition-group>
+        </div>
       </div>
     </div>
   </div>
@@ -72,6 +74,12 @@ export default {
         const index = this.events[chairIndex].findIndex(i => i.id === id)
         this.events[chairIndex].splice(index, 1)
       }, 4000)
+    },
+    onTouch (index) {
+      this.$refs.poufs[index].classList.add('touched')
+      setTimeout(() => {
+        this.$refs.poufs[index].classList.remove('touched')
+      }, 200)
     }
   },
   mounted() {
@@ -94,10 +102,17 @@ export default {
 </script>
 
 <style lang="scss" module>
-.room {}
-.chair {
+.room {
+}
+.item {
   position: absolute;
   width: 28%;
+  user-select: none;
+  transition: transform 0.4s cubic-bezier(0.65, 2.28, 0.42,-0.12);
+  &:global(.touched) {
+    transition: transform 0.2s ease;
+    transform: translate(0, -30px);
+  }
   &:nth-child(1) {
     top: 10%;
     left: 0;
@@ -108,7 +123,9 @@ export default {
   &:nth-child(2) {
     top: 10%;
     left: 24%;
-    transform: rotate(10deg);
+    .chair {
+      transform: rotate(10deg);
+    }
   }
   &:nth-child(3) {
     top: 12%;
@@ -117,7 +134,9 @@ export default {
   &:nth-child(4) {
     top: 14%;
     left: 72%;
-    transform: rotate(-10deg);
+    .chair {
+      transform: rotate(-10deg);
+    }
   }
 
   &:nth-child(5) {
@@ -134,13 +153,17 @@ export default {
   &:nth-child(7) {
     top: 40%;
     left: 65%;
-    transform: rotate(8deg);
+    .chair {
+      transform: rotate(8deg);
+    }
   }
 
   &:nth-child(8) {
     top: 76%;
     left: 2%;
-    transform: rotate(6deg);
+    .chair {
+      transform: rotate(6deg);
+    }
     .pouf {
       transform: scale(-1, 1);
     }
@@ -148,7 +171,9 @@ export default {
   &:nth-child(9) {
     top: 74%;
     left: 28%;
-    transform: rotate(-5deg);
+    .chair {
+      transform: rotate(-5deg);
+    }
   }
   &:nth-child(10) {
     top: 76%;

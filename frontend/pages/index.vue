@@ -15,6 +15,7 @@
     <section-help />
     <section-controls :class="$style.controls" />
     <section-loading :style="loadingStyle" />
+    <div :class="$style.ver">Ver: 1.0.0</div>
   </div>
 </template>
 
@@ -154,5 +155,10 @@ export default {
   top: 70px;
   right: 150px;
 }
-.name {}
+.ver {
+  position: fixed;
+  bottom: 20px;
+  right: 150px;
+  color: #fff;
+}
 </style>

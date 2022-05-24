@@ -50,7 +50,6 @@ export default {
         } else {
           await this.$web3.game.createRoom(this.account.address, this.name, this.form.amount)
         }
-        this.form.amount = ''
       } catch (e) {} finally {
         this.$spinner.stop()
       }
@@ -85,7 +84,7 @@ export default {
       return this.roomIsActive ? this.room.price + 1 : 1
     },
     maxValue () {
-      return this.account ? this.account.balance : 0
+      return this.minValue ** 2
     },
     amountValid () {
       const amount = +this.form.amount

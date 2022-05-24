@@ -158,13 +158,6 @@ export default {
     width: 100%;
   }
 }
-.man {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
 .name {
   position: absolute;
   left: 50%;
@@ -204,6 +197,7 @@ export default {
   display: flex;
   align-items: center;
   color: greenyellow;
+  white-space: nowrap;
   z-index: 4;
   .icon {
     margin-right: 4px;

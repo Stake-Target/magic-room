@@ -63,11 +63,11 @@ export default {
       this.autoSet()
     },
     getAutoAmount () {
-      switch (this.autoValue) {
-        case '1': return this.minValue
-        case '2': return this.minValue + Math.floor(this.minValue * 25 / 100)
-        case '3': return this.minValue + Math.floor(this.minValue * 50 / 100)
-        case '4': return this.minValue + this.minValue
+      switch (+this.autoValue) {
+        case 1: return this.minValue
+        case 2: return this.minValue + Math.floor(this.minValue * 25 / 100)
+        case 3: return this.minValue + Math.floor(this.minValue * 50 / 100)
+        case 4: return this.minValue + this.minValue
       }
     },
     autoSet () {
@@ -75,11 +75,6 @@ export default {
         this.form.amount = this.getAutoAmount()
       }
     }
-  },
-  mounted() {
-    // setTimeout(() => {
-    //   this.form.amount = 100
-    // }, 2000)
   },
   computed: {
     ...mapGetters('room', ['roomIsActive']),
@@ -108,6 +103,9 @@ export default {
   },
   watch: {
     minValue () {
+      this.autoSet()
+    },
+    account () {
       this.autoSet()
     }
   }

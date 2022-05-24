@@ -19,7 +19,7 @@
         <div :class="$style.space"></div>
         <div :class="$style.value" v-if="reward">
           <img :class="$style.coin" src="~/assets/images/coin.png" alt="" />
-          {{ reward.value | number  }}
+          {{ reward.value | number }}
         </div>
       </template>
       <template v-if="chairChanges">

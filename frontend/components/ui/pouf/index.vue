@@ -23,7 +23,7 @@ export default {
       default: false
     },
     empty: {
-      ype: Boolean,
+      type: Boolean,
       default: false
     }
   },

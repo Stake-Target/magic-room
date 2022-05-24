@@ -64,6 +64,10 @@ export default {
         test: /\.(glsl|frag|vert)$/,
         loader: 'raw-loader'
       })
+      config.module.rules.push({
+        test: /\.(mp3|mp4)$/,
+        loader: 'file-loader'
+      })
     },
     loaders: {
       cssModules: {

@@ -22,7 +22,7 @@
     </div>
     <div :class="$style.item">
       <div :class="$style.value">
-        <ui-date :value="room.lastActionTime + 24 * 60 * 60"  to-ms format="future-time" update :timeout="1000" />
+        <ui-date :value="room.lastActionTime + 24 * 60 * 60" to-ms format="future-time" update :timeout="1000" />
       </div>
       <div :class="$style.title"><span :class="$style.emoji">🕗</span> Timeout</div>
     </div>
@@ -76,14 +76,14 @@ export default {
 .value {
   display: flex;
   align-items: center;
-  font-size: 24px;
+  font-size: 20px;
 }
 .emoji {
   font-size: 24px;
 }
 .coin {
-  width: 26px;
-  height: 26px;
+  width: 20px;
+  height: 20px;
   margin-right: 8px;
 }
 </style>

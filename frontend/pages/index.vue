@@ -13,6 +13,7 @@
 
     <section-bubbles />
     <section-help />
+    <section-controls :class="$style.controls" />
     <section-loading :style="loadingStyle" />
   </div>
 </template>
@@ -29,12 +30,14 @@ import SectionForm from "~/components/sections/form"
 import SectionLoading from "~/components/sections/loading"
 import SectionSigninName from "~/components/sections/signin/name"
 import detectEthereumProvider from '@metamask/detect-provider'
+import SectionControls from "~/components/sections/controls"
 // import MetaMaskOnboarding from '@metamask/onboarding'
 
 export default {
   layout: 'page',
   name: 'GameMagicRoomPage',
   components: {
+    SectionControls,
     SectionSigninName,
     SectionLoading,
     SectionForm,
@@ -72,9 +75,6 @@ export default {
         const provider = await detectEthereumProvider()
         if (typeof window.ethereum !== 'undefined') {
           window.ethereum.on('chainChanged', _chainId => window.location.reload())
-          window.ethereum.on('message', (message) => {
-            console.log('message', message)
-          })
           await this.$web3.switchChain()
           await this.initAddress(provider.selectedAddress)
         }
@@ -109,7 +109,7 @@ export default {
   transition: right 0.6s $transition-bounce;
   transition-delay: 100ms;
   .authorized & {
-    right: 10%;
+    right: 18%;
   }
 }
 .events {
@@ -147,6 +147,12 @@ export default {
   .authorized & {
     transform: translate(0, 0);
   }
+}
+.controls {
+  z-index: 50;
+  position: fixed;
+  top: 70px;
+  right: 150px;
 }
 .name {}
 </style>

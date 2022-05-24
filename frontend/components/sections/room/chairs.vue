@@ -1,10 +1,12 @@
 <template>
   <div :class="$style.room">
     <div :class="$style.chair" v-for="(chair, i) in chairs" :key="chair.index">
-      <img v-if="chair.isPriority" src="~/assets/images/chair.red.png" alt="" />
-      <img v-else src="~/assets/images/chair.blue.png" alt="" />
-      <img :class="$style.man" v-if="chair.isMy" src="~/assets/images/man.green.png" alt="" />
-      <img :class="$style.man" v-else-if="!chair.isEmpty" src="~/assets/images/man.blue.png" alt="" />
+      <ui-pouf
+        :class="$style.pouf"
+        :priority="chair.isPriority"
+        :my="chair.isMy"
+        :empty="chair.isEmpty"
+      />
       <div :class="$style.name" v-if="room.names[i]">{{ room.names[i] }}</div>
       <div :class="$style.events">
         <transition-group :name="$style.events" tag="div">
@@ -27,9 +29,13 @@
 
 <script>
 import { mapState } from 'vuex'
+import UiPouf from "~/components/ui/pouf"
 
 export default {
   name: 'SectionRoomChairs',
+  components: {
+    UiPouf
+  },
   data () {
     return {
       events: [
@@ -95,6 +101,9 @@ export default {
   &:nth-child(1) {
     top: 10%;
     left: 0;
+    .pouf {
+      transform: scale(-1, 1);
+    }
   }
   &:nth-child(2) {
     top: 10%;
@@ -106,7 +115,7 @@ export default {
     left: 48%;
   }
   &:nth-child(4) {
-    top: -2%;
+    top: 14%;
     left: 72%;
     transform: rotate(-10deg);
   }
@@ -114,6 +123,9 @@ export default {
   &:nth-child(5) {
     top: 42%;
     left: 5%;
+    .pouf {
+      transform: scale(-1, 1);
+    }
   }
   &:nth-child(6) {
     top: 43%;
@@ -129,6 +141,9 @@ export default {
     top: 76%;
     left: 2%;
     transform: rotate(6deg);
+    .pouf {
+      transform: scale(-1, 1);
+    }
   }
   &:nth-child(9) {
     top: 74%;

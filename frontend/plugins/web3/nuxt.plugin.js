@@ -61,7 +61,6 @@ export default function ({ app }, inject) {
         params: [{ chainId: networkData.chainId }]
       })
     } catch (switchError) {
-      console.log('switchError', switchError)
       // This error code indicates that the chain has not been added to MetaMask.
       if (switchError.code === 4902) {
         try {

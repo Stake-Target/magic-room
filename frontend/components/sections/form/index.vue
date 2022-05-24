@@ -41,9 +41,7 @@ export default {
           await this.$web3.game.createRoom(this.account.address, this.name, this.form.amount)
         }
         this.form.amount = ''
-      } catch (e) {
-        console.log(e)
-      } finally {
+      } catch (e) {} finally {
         this.$spinner.stop()
       }
     }

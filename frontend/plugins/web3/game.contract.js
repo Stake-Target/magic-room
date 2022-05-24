@@ -5,7 +5,7 @@ export class MagicRoomContract {
   constructor (provider, data) {
     this.address = data.address
     this.provider = provider
-    this.genesisBlock = 19546769
+    this.genesisBlock = 19585969
     this.contract = new this.provider.eth.Contract(MagicRoom.abi, this.address)
     this._listeners = []
     this._updateListeners = []
